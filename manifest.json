@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Streambuddy",
+  "version": "1.0",
+  "description": "A simple hello world extension",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "host_permissions": [
+    "*://*.netflix.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*.netflix.com/*"],
+      "js": ["assets/contentScript.js"]
+    }
+  ]
+}
