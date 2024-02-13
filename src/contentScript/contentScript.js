@@ -5,25 +5,42 @@ function initializeObserver() {
   if (parentElement) {
     // Function to observe the .playback-notification element for changes
     function observePlaybackNotification(targetNode) {
-      // Find a common parent for targetNode and the video element. This might need adjustment depending on the actual DOM structure
-      let commonParent = targetNode.closest(".watch-video"); // Adjust '.common-parent-selector' to match your actual DOM structure
-
+      // Find a common parent for targetNode and the video element.
+      const commonParent = targetNode.closest(".watch-video");
+      if (!commonParent) return;
       // If a common parent is found, try to find the video within this parent
-      if (commonParent) {
-        let video = commonParent.querySelector("video");
-        if (video) {
-          // Now you can safely access video.currentTime
-          if (targetNode.classList.contains("playback-notification--play")) {
-            console.log("Super play!");
-            console.log("video.currentTime", video.currentTime);
-          } else if (
-            targetNode.classList.contains("playback-notification--pause")
-          ) {
-            console.log("Super pause!");
-            console.log("video.currentTime", video.currentTime);
-          }
-        }
+      const video = commonParent.querySelector("video");
+      if (!video) return;
+
+      const isPlayNotification = targetNode.classList.contains(
+        "playback-notification--play"
+      );
+      const isPauseNotification = targetNode.classList.contains(
+        "playback-notification--pause"
+      );
+
+      let currentTime = null;
+      let playbackStatus = null;
+      // Now you can safely access video.currentTime
+      if (isPlayNotification) {
+        console.log("Super play!");
+        console.log("video.currentTime", video.currentTime);
+        currentTime = video.currentTime;
+        playbackStatus = "playing";
+      } else if (isPauseNotification) {
+        console.log("Super pause!");
+        console.log("video.currentTime", video.currentTime);
+        currentTime = video.currentTime;
+        playbackStatus = "paused";
       }
+      if (!currentTime || !playbackStatus) return;
+      chrome.runtime.sendMessage({
+        type: "VIDEO_STATUS_CHANGE",
+        payload: {
+          status: playbackStatus,
+          time: currentTime,
+        },
+      });
     }
 
     // Set up a MutationObserver to observe the parent element for changes
@@ -67,8 +84,10 @@ function observeDynamicElements() {
   });
 }
 
-if (document.querySelector(".watch-video")) {
-  initializeObserver(); // If .watch-video exists, initialize observer
-} else {
-  observeDynamicElements(); // If not, observe the body for when .watch-video is added
+function main() {
+  document.querySelector(".watch-video")
+    ? initializeObserver()
+    : observeDynamicElements();
 }
+
+main();

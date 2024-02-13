@@ -1,7 +1,7 @@
 import "./App.css";
 
+import Netflix from "./netflix/netflix";
 import reactLogo from "./assets/react.svg";
-// import VideoWatcher from "./netflix/netflix";
 import { useState } from "react";
 import viteLogo from "/vite.svg";
 
@@ -19,7 +19,7 @@ function App() {
         </a>
       </div>
       <h1>Streambuddy</h1>
-      {/* <VideoWatcher /> */}
+      <Netflix />
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
