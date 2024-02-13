@@ -28,6 +28,10 @@ const Netflix = () => {
     chrome.runtime.onMessage.addListener(handleMessage);
 
     // Request any cached status from the background script
+
+    /**
+     * TODO: maybe delete REQUEST_CACHED_STATUS
+     * **/
     chrome.runtime.sendMessage({ type: "REQUEST_CACHED_STATUS" });
 
     // Cleanup function to remove the message listener
