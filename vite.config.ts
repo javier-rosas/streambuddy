@@ -1,5 +1,5 @@
-import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [react()],
@@ -7,8 +7,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: "index.html", // Your main entry point for the React app
-        contentScript: "src/contentScript/contentScript.js", // Path to your content script
-        background: "src/background/background.js", // Path to your background script
+        contentScript: "src/contentScripts/contentScript.js", // Path to your content script
+        background: "src/backgroundScripts/background.js", // Path to your background script
       },
       output: {
         entryFileNames: `assets/[name].js`, // This controls the naming of output files
