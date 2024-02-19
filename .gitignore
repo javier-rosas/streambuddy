@@ -4,6 +4,7 @@
 # Vite build output
 dist/
 build/
+package-lock.json
 
 # TypeScript compiled output
 *.tsbuildinfo
