@@ -2,7 +2,9 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchUserDataAndStore } from "../api/user/fetchUserDataAndStore";
 import reactLogo from "../assets/react.svg";
+import { userData } from "../utils/userUtils";
 import viteLogo from "/vite.svg";
+
 export default function LandingExtension() {
   const navigate = useNavigate();
 
@@ -17,8 +19,6 @@ export default function LandingExtension() {
   };
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userData") || "{}");
-    console.log("userData in useEffect component: ", userData);
     if (userData) {
       navigate("/home");
     }
