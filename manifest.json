@@ -22,9 +22,14 @@
   "background": {
     "service_worker": "assets/background.js"
   },
+  "oauth2": {
+    "client_id": "835250548123-cnovr81e7etgf4hmlm8nn8eoin65nknd.apps.googleusercontent.com",
+    "scopes": ["email", "profile"]
+  },
   "permissions": [
     "activeTab",
     "storage",
-    "tabs"
+    "tabs",
+    "identity"
   ]
 }

@@ -1,38 +1,17 @@
 import "./App.css";
 
-import Netflix from "./netflix/netflix";
-import reactLogo from "./assets/react.svg";
-import { useState } from "react";
-import viteLogo from "/vite.svg";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0);
+import Home from "./home";
+import LandingExtension from "./landingExtension";
 
+export default function App() {
   return (
-    <div className="bg-indigo-700">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Streambuddy</h1>
-      <Netflix />
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+    <MemoryRouter>
+      <Routes>
+        <Route path="/" element={<LandingExtension />} />
+        <Route path="/home" element={<Home />} />
+      </Routes>
+    </MemoryRouter>
   );
 }
-
-export default App;
