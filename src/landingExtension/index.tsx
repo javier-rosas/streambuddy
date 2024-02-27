@@ -1,8 +1,8 @@
 import { fetchUserDataAndStore } from "../api/user/fetchUserDataAndStore";
+import { getUserData } from "../utils/userUtils";
 import reactLogo from "../assets/react.svg";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { userData } from "../utils/userUtils";
 import viteLogo from "/vite.svg";
 
 export default function LandingExtension() {
@@ -19,7 +19,7 @@ export default function LandingExtension() {
   };
 
   useEffect(() => {
-    if (userData) navigate("/home");
+    if (getUserData()) navigate("/home");
   }, []);
 
   return (

@@ -15,8 +15,8 @@ export const fetchUserDataAndStore = async (token: string) => {
     }
 
     const result = await response.json();
-    console.log("User Data in fetchUserDataAndStore.ts:", result);
     localStorage.setItem("userData", JSON.stringify(result));
+    localStorage.setItem("userToken", token);
     return result;
   } catch (error) {
     console.error("Failed to fetch user data:", error);
