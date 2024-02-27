@@ -1,7 +1,7 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { fetchUserDataAndStore } from "../api/user/fetchUserDataAndStore";
 import reactLogo from "../assets/react.svg";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { userData } from "../utils/userUtils";
 import viteLogo from "/vite.svg";
 
