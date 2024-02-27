@@ -1,5 +1,5 @@
 export const fetchUserDataAndStore = async (token: string) => {
-  const API_ENDPOINT = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json"; // Example endpoint, adjust based on your needs
+  const API_ENDPOINT = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json";
 
   try {
     const response = await fetch(API_ENDPOINT, {

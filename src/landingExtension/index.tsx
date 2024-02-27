@@ -19,9 +19,7 @@ export default function LandingExtension() {
   };
 
   useEffect(() => {
-    if (userData) {
-      navigate("/home");
-    }
+    if (userData) navigate("/home");
   }, []);
 
   return (
