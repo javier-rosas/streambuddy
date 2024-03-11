@@ -1,7 +1,7 @@
 import { handleAuthToken } from "./auth/background";
 import { handleNetflixStatus } from "./netflix/background";
-import { initVideoConnection } from "./socket-connection/background";
+import { handleStartStream } from "./stream/background";
+
 chrome.runtime.onMessage.addListener(handleNetflixStatus);
 chrome.runtime.onMessage.addListener(handleAuthToken);
-// Initialize the video connection.
-initVideoConnection();
+chrome.runtime.onMessage.addListener(handleStartStream);

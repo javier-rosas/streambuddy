@@ -42,7 +42,7 @@
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
   "web_accessible_resources": [{
-    "matches": ["<all_urls>"],
-    "resources": ["assets/contentScript.js"]
+    "matches": ["*://*.netflix.com/*"],
+    "resources": ["assets/bundler-GOZcYwuK.js", "assets/_commonjsHelpers-CqkleIqs.js", "assets/index-ChGp7972.js"] 
   }]
 }
