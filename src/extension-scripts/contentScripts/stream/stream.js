@@ -2,6 +2,8 @@ let io;
 (async () => {
   const socketio = await import("socket.io-client");
   io = socketio.default;
+  // console log timestamp when socket.io-client is loaded
+  console.log("socket.io-client loaded at", new Date().toLocaleTimeString());
 })();
 
 export function streamMain() {
@@ -16,7 +18,7 @@ export function streamMain() {
   });
 
   const startStream = async (userId) => {
-    socket = io("http://localhost:2000");
+    socket = io("http://167.99.112.197:2000");
 
     localStream = await navigator.mediaDevices.getUserMedia({
       video: true,
@@ -26,7 +28,11 @@ export function streamMain() {
     socket.emit("join-room", { userId });
 
     socket.on("user-connected", async (data) => {
-      console.log("user connected in the client", data.userId);
+      console.log(
+        "user connected in the client",
+        data.userId,
+        new Date().toLocaleTimeString()
+      );
       await initializePeerConnection(data.userId);
 
       const offer = await peerConnection.createOffer();
