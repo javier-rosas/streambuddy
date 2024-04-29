@@ -8,7 +8,7 @@ export default defineConfig({
       input: {
         main: "index.html", // Your main entry point for the React app
         contentScript: "src/extension-scripts/contentScripts/contentScript.js", // Path to your content script
-        background: "src/extension-scripts/backgroundScripts/background.js", // Path to your background script
+        background: "src/extension-scripts/serviceWorker/serviceWorker.js", // Path to your background script
       },
       output: {
         entryFileNames: `assets/[name].js`, // This controls the naming of output files

@@ -1,7 +1,7 @@
 import { clearUserDataAndToken, getUserToken } from "../utils/userUtils.js";
 
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function Home() {
   const navigate = useNavigate();

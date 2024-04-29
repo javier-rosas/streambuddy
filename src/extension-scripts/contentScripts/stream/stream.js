@@ -18,7 +18,7 @@ export function streamMain() {
   });
 
   const startStream = async (userId) => {
-    socket = io("http://167.99.112.197:2000");
+    socket = io("https://api.streamtogether.io/");
 
     localStream = await navigator.mediaDevices.getUserMedia({
       video: true,
