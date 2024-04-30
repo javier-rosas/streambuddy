@@ -45,5 +45,6 @@
   "web_accessible_resources": [{
     "matches": ["*://*.netflix.com/*"],
     "resources": ["assets/bundler-GOZcYwuK.js", "assets/_commonjsHelpers-CqkleIqs.js", "assets/index-ChGp7972.js"] 
-  }]
+  }],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqwBICpbitxrP9qwGI3X4pEJ4ZdaimLpAAzsRL/fAw03lI9zNOijIhpxVJfcrAntApr50EOMKkX9ilJ0oULDZ4EB36h19wqUmqLnczHXYM11iuQn68avReR6klxbPqLRjZXk5N/nAIEWAlQYY2zicTsS2kMayuEoghjBmfPw1P7PQQSlGIZjgX/f0KODpuQZQEJS7Wa6M2omcgiyC5CAxFvJxbtMSRprvTvPw1bPaUuBUf3yyW60y25EoRahCUx5Y64xwKNsgEfHBn0EZb7QTpYh1vWywhHfndTRof8p5qGoftgMJ9dsFK4Tub3dSb7Rg0NWK7gaVhiqCXawIgeYLtQIDAQAB"
 }
