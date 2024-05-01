@@ -9,7 +9,7 @@ package-lock.json
 # TypeScript compiled output
 *.tsbuildinfo
 # *.js
-*.jsx
+# *.jsx
 *.js.map
 *.jsx.map
 
