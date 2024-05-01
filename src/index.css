@@ -32,6 +32,7 @@ body {
     width: 360px; /* Set your desired width */
     height: 300px; /* Set your desired height */
     overflow: hidden; /* Hides any overflow */
+    font-family: 'Montserrat', sans-serif;
 }
 
 h1 {
