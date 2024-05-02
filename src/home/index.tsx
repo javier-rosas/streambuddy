@@ -22,12 +22,15 @@ export default function Home() {
 
       <div className="flex flex-col items-center justify-center mt-16">
         <div className="mb-8">
-          <div className="mx-auto flex items-center justify-center rounded-full bg-green-100 shadow-2xl">
+          <div className="mx-auto flex items-center justify-center rounded-full bg-indigo-300 shadow-2xl">
             <button
               type="button"
-              className="rounded-md w-72 h-12 bg-green-100 text-sm text-black shadow-sm hover:bg-green-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              style={{
+                background: "linear-gradient(to right, #667eea, #764ba2)", // Gradient from indigo to purple
+              }}
+              className="rounded-md w-72 h-12 text-sm text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Start Party
+              Start Streaming Together
             </button>
           </div>
         </div>
