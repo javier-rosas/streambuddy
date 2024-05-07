@@ -1,8 +1,8 @@
-const VITE_GOOGLE_AUTH_ENDPOINT = import.meta.env.VITE_BASE_URL;
+const VITE_GOOGLE_AUTH_ENDPOINT = import.meta.env.VITE_GOOGLE_AUTH_ENDPOINT;
 const VITE_API_AUTH_ENDPOINT = import.meta.env.VITE_API_AUTH_ENDPOINT;
 
 // Function to fetch user data from Google and store it in local storage
-export const fetchUserDataAndStore = async (token: string) => {
+export const fetchUserDataAndStore = async (token: string): Promise<any> => {
   try {
     const response = await fetch(VITE_GOOGLE_AUTH_ENDPOINT, {
       method: "GET",
@@ -16,17 +16,19 @@ export const fetchUserDataAndStore = async (token: string) => {
       throw new Error(`Error! status: ${response.status}`);
     }
 
-    const result = await response.json();
-    localStorage.setItem("userData", JSON.stringify(result));
+    const user = await response.json();
+    localStorage.setItem("userData", JSON.stringify(user));
     localStorage.setItem("userGoogleToken", token);
-    return result;
+
+    const jwt = await authenticateUserAndStoreJwt(user);
+    return { user, jwt };
   } catch (error) {
     console.error("Failed to fetch user data:", error);
   }
 };
 
 // Function to authenticate user and store JWT
-export const authenticateUserAndStoreToken = async (user: any) => {
+const authenticateUserAndStoreJwt = async (user: any): Promise<any> => {
   try {
     const authResponse = await fetch(VITE_API_AUTH_ENDPOINT, {
       method: "POST",
