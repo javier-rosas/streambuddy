@@ -40,8 +40,8 @@ export const login = (navigate: any) => {
     if (!response || !response.token) return;
     try {
       const user = await fetchUserDataAndStore(response.token);
-      await authenticateUserAndStoreToken(user);
-      if (user) {
+      const jwt = await authenticateUserAndStoreToken(user);
+      if (user && jwt) {
         navigate("/home");
       }
     } catch (error) {
