@@ -17,18 +17,17 @@ export const fetchUserDataAndStore = async (token: string): Promise<any> => {
     }
 
     const user = await response.json();
+
     localStorage.setItem("userData", JSON.stringify(user));
     localStorage.setItem("userGoogleToken", token);
-
-    const jwt = await authenticateUserAndStoreJwt(user);
-    return { user, jwt };
+    return user;
   } catch (error) {
     console.error("Failed to fetch user data:", error);
   }
 };
 
 // Function to authenticate user and store JWT
-const authenticateUserAndStoreJwt = async (user: any): Promise<any> => {
+export const authenticateUserAndStoreJwt = async (user: any): Promise<any> => {
   try {
     const authResponse = await fetch(VITE_API_AUTH_ENDPOINT, {
       method: "POST",

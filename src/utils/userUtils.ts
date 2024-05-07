@@ -1,4 +1,7 @@
-import { fetchUserDataAndStore } from "../api/user/fetchUserDataAndStore";
+import {
+  authenticateUserAndStoreJwt,
+  fetchUserDataAndStore,
+} from "../api/user/fetchUserDataAndStore";
 
 export const getUserData = () => {
   const data = localStorage.getItem("userData");
@@ -36,7 +39,8 @@ export const login = (navigate: any) => {
   chrome.runtime.sendMessage({ type: "login" }, async function (response) {
     if (!response || !response.token) return;
     try {
-      const { user, jwt } = await fetchUserDataAndStore(response.token);
+      const user = await fetchUserDataAndStore(response.token);
+      const jwt = await authenticateUserAndStoreJwt(user);
       if (user && jwt) {
         navigate("/home");
       }

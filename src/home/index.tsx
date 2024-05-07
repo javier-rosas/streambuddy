@@ -8,8 +8,6 @@ export default function Home() {
 
   const user = getUserData();
 
-  console.log("user", user);
-
   return (
     <>
       <button

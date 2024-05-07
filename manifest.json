@@ -9,6 +9,8 @@
   "host_permissions": [
     "*://*.netflix.com/*",
     "http://localhost:2000/*",
+    "https://api.streamtogether.io/*",
+    "ws://api.streamtogether.io/*",
     "http://167.99.112.197:2000/*",
     "ws://localhost:2000/*",
     "https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js",
