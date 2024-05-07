@@ -1,4 +1,7 @@
-import { fetchUserDataAndStore } from "../api/user/fetchUserDataAndStore";
+import {
+  authenticateUserAndStoreToken,
+  fetchUserDataAndStore,
+} from "../api/user/fetchUserDataAndStore";
 
 export const getUserData = () => {
   const data = localStorage.getItem("userData");
@@ -6,20 +9,21 @@ export const getUserData = () => {
 };
 
 export const getUserToken = () => {
-  return localStorage.getItem("userToken");
+  return localStorage.getItem("userGoogleToken");
 };
 
 // set userData and userToken to null
 export const clearUserDataAndToken = () => {
   localStorage.removeItem("userData");
-  localStorage.removeItem("userToken");
+  localStorage.removeItem("userGoogleToken");
+  localStorage.removeItem("jwt");
 };
 
 export const logout = (navigate: any) => {
-  const userToken = getUserToken();
-  if (!userToken) return;
+  const userGoogleToken = getUserToken();
+  if (!userGoogleToken) return;
   chrome.runtime.sendMessage(
-    { type: "logout", token: userToken },
+    { type: "logout", token: userGoogleToken },
     function (response) {
       if (!response || !response.success) {
         console.error("Failed to logout");
@@ -34,9 +38,14 @@ export const logout = (navigate: any) => {
 export const login = (navigate: any) => {
   chrome.runtime.sendMessage({ type: "login" }, async function (response) {
     if (!response || !response.token) return;
-    const user = await fetchUserDataAndStore(response.token);
-    if (user) {
-      navigate("/home");
+    try {
+      const user = await fetchUserDataAndStore(response.token);
+      await authenticateUserAndStoreToken(user);
+      if (user) {
+        navigate("/home");
+      }
+    } catch (error) {
+      console.error("Failed to login:", error);
     }
   });
 };

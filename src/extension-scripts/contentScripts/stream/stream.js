@@ -1,3 +1,5 @@
+const VITE_API_BASE_ENDPOINT = import.meta.env.VITE_API_BASE_ENDPOINT;
+
 let io;
 (async () => {
   const socketio = await import("socket.io-client");
@@ -18,7 +20,7 @@ export function streamMain() {
   });
 
   const startStream = async (userId) => {
-    socket = io("https://api.streamtogether.io/");
+    socket = io(VITE_API_BASE_ENDPOINT);
 
     localStream = await navigator.mediaDevices.getUserMedia({
       video: true,

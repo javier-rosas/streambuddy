@@ -1,7 +1,9 @@
+const VITE_APP_NETFLIX_URL = import.meta.env.VITE_APP_NETFLIX_URL;
+
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   if (
     changeInfo.status === "complete" &&
-    tab.url.startsWith("https://your-party-link-domain/")
+    tab.url.startsWith(VITE_APP_NETFLIX_URL)
   ) {
     // Extract the party link details from the URL if needed
     const partyLinkDetails = extractPartyId(tab.url);
