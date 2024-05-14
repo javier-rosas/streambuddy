@@ -1,12 +1,16 @@
 import ChoosePlatform from "./choosePlatform";
-import { getUserData } from "../utils/userUtils";
 import { logout } from "../utils/userUtils.js";
+// import { getUserData } from "../utils/userUtils";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const navigate = useNavigate();
 
-  const user = getUserData();
+  // const user = getUserData();
+
+  const getLink = () => {
+    console.log("getLink");
+  };
 
   return (
     <>
@@ -22,6 +26,7 @@ export default function Home() {
         <div className="mb-8">
           <div className="mx-auto flex items-center justify-center rounded-full bg-indigo-300 shadow-2xl">
             <button
+              onClick={getLink}
               type="button"
               style={{
                 background: "linear-gradient(to right, #667eea, #764ba2)", // Gradient from indigo to purple

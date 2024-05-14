@@ -1,8 +1,13 @@
-const VITE_GOOGLE_AUTH_ENDPOINT = import.meta.env.VITE_GOOGLE_AUTH_ENDPOINT;
-const VITE_API_AUTH_ENDPOINT = import.meta.env.VITE_API_AUTH_ENDPOINT;
+import {
+  VITE_API_AUTH_ENDPOINT,
+  VITE_API_USER_ENDPOINT,
+  VITE_GOOGLE_AUTH_ENDPOINT,
+} from "@/utils/constants";
+
+import { User } from "@/types";
 
 // Function to fetch user data from Google and store it in local storage
-export const fetchUserDataAndStore = async (token: string): Promise<any> => {
+export const fetchUserData = async (token: string): Promise<any> => {
   try {
     const response = await fetch(VITE_GOOGLE_AUTH_ENDPOINT, {
       method: "GET",
@@ -18,8 +23,6 @@ export const fetchUserDataAndStore = async (token: string): Promise<any> => {
 
     const user = await response.json();
 
-    localStorage.setItem("userData", JSON.stringify(user));
-    localStorage.setItem("userGoogleToken", token);
     return user;
   } catch (error) {
     console.error("Failed to fetch user data:", error);
@@ -42,10 +45,36 @@ export const authenticateUserAndStoreJwt = async (user: any): Promise<any> => {
     }
 
     const { jwt } = await authResponse.json();
-    localStorage.setItem("jwt", jwt); // Storing JWT for future use
     return jwt; // Returning JWT for potential immediate use
   } catch (error) {
     console.error("Failed to authenticate user and store token:", error);
     throw error; // Rethrowing the error to handle it in the caller
+  }
+};
+
+// Function to call the createOrUpdate endpoint
+export const createOrUpdateUser = async (
+  jwt: string,
+  user: User
+): Promise<any> => {
+  try {
+    const response = await fetch(VITE_API_USER_ENDPOINT, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ user }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to create or update user:", error);
+    throw error;
   }
 };
