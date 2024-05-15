@@ -24,8 +24,13 @@ export const getUserData = () => {
 };
 
 // Function to get JWT from local storage
-export const getUserToken = () => {
+export const getUserGoogleToken = () => {
   return localStorage.getItem("userGoogleToken");
+};
+
+// Function to get JWT from local storage
+export const getJwtToken = () => {
+  return localStorage.getItem("jwt");
 };
 
 // set userData and userToken to null
@@ -37,7 +42,7 @@ export const clearUserDataAndToken = () => {
 
 // Function to logout user
 export const logout = (navigate: any) => {
-  const userGoogleToken = getUserToken();
+  const userGoogleToken = getUserGoogleToken();
   if (!userGoogleToken) return;
   chrome.runtime.sendMessage(
     { type: "logout", token: userGoogleToken },

@@ -1,15 +1,24 @@
+import { getJwtToken, getUserData, logout } from "@/utils/userUtils.js";
+
 import ChoosePlatform from "./choosePlatform";
-import { logout } from "../utils/userUtils.js";
-// import { getUserData } from "../utils/userUtils";
+import { postSession } from "@/api/session";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const navigate = useNavigate();
 
-  // const user = getUserData();
+  const user = getUserData();
+  const jwt = getJwtToken();
 
-  const getLink = () => {
-    console.log("getLink");
+  const getLink = async () => {
+    if (!user || !user.email || !jwt) {
+      return;
+    }
+    const session = await postSession(jwt, user.email);
+    console.log("session", session);
+    if (!session || !session.link) return;
+    console.log("session", session.link);
+    return session.link;
   };
 
   return (
