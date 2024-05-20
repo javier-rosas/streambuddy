@@ -22,6 +22,7 @@
       "@/api/*": ["api/*"],
       "@/utils/*": ["utils/*"],
       "@/constants": ["utils/constants.ts"],
+      "@/randomComponents": ["components/randomComponents.tsx"],
     }
   },
   "include": ["src"],
