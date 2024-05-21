@@ -1,4 +1,4 @@
-function Spinner({ styles = "" }) {
+export default function Spinner({ styles = "" }) {
   return (
     <div
       className={
@@ -27,5 +27,3 @@ function Spinner({ styles = "" }) {
     </div>
   );
 }
-
-export default Spinner;
