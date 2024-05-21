@@ -31,7 +31,7 @@ export default function Home() {
 
   const handleButtonClick = async () => {
     setIsSpinning(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second
+    await new Promise((resolve) => setTimeout(resolve, 500)); // Wait for 0.5 seconds
     await getLink();
     setIsSpinning(false);
   };

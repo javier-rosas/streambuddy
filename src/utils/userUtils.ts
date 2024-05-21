@@ -51,8 +51,8 @@ export const logout = (navigate: any) => {
         console.error("Failed to logout");
         return;
       }
-      navigate("/");
       clearUserDataAndToken();
+      navigate("/");
     }
   );
 };
