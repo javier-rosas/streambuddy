@@ -7,3 +7,5 @@ export const VITE_API_USER_ENDPOINT = import.meta.env.VITE_API_USER_ENDPOINT;
 
 export const VITE_API_SESSION_ENDPOINT = import.meta.env
   .VITE_API_SESSION_ENDPOINT;
+
+export const VITE_API_JOIN_ENDPOINT = import.meta.env.VITE_API_JOIN_ENDPOINT;

@@ -2,7 +2,8 @@ import { getJwtToken, getUserData, logout } from "@/utils/userUtils.js";
 
 import ChoosePlatform from "./choosePlatform";
 import Spinner from "@/randomComponents";
-import { postSession } from "@/api/session";
+import { VITE_API_JOIN_ENDPOINT } from "@/utils/constants";
+import { createSession } from "@/api/session";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -18,7 +19,7 @@ export default function Home() {
   const getLink = async () => {
     if (!user || !user.email || !jwt) return;
     try {
-      const session = await postSession(jwt, user.email);
+      const session = await createSession(jwt, user.email);
       if (!session || !session.link) return;
       console.log("session", session.link);
       setLink(session.link);
@@ -37,10 +38,10 @@ export default function Home() {
 
   const handleCopy = () => {
     navigator.clipboard
-      .writeText(`https://api.streamtogether.io/${link}`)
+      .writeText(`${VITE_API_JOIN_ENDPOINT}/${link}`)
       .then(() => {
         setCopied(true);
-        setTimeout(() => setCopied(false), 1000); // Reset the copied state after 1 second
+        setTimeout(() => setCopied(false), 500); // Reset the copied state after 0.5 seconds
       });
   };
 
@@ -66,7 +67,7 @@ export default function Home() {
               <p className="text-black text-xs">Copied!</p>
             ) : (
               <p className="text-black text-xs mr-2">
-                {`https://api.streamtogether.io/${link}`}
+                {`${VITE_API_JOIN_ENDPOINT}/${link}`}
               </p>
             )}
 
