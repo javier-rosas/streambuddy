@@ -1,11 +1,11 @@
-import { getUserData, login } from "../utils/userUtils";
+import { getUserData, login } from "@/utils/userUtils";
 
-import reactLogo from "../assets/react.svg";
+import reactLogo from "@/assets/react.svg";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import viteLogo from "/vite.svg";
 
-export default function LandingExtension() {
+export default function LandingPage() {
   const navigate = useNavigate();
 
   useEffect(() => {

@@ -2,7 +2,7 @@ import {
   authenticateUserAndStoreJwt,
   createOrUpdateUser,
   fetchUserData,
-} from "@/api/user";
+} from "@/services/user";
 
 import { User } from "@/types";
 

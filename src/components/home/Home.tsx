@@ -1,9 +1,9 @@
 import { getJwtToken, getUserData, logout } from "@/utils/userUtils.js";
 
-import ChoosePlatform from "./choosePlatform";
-import Spinner from "@/randomComponents";
+import ChoosePlatform from "./ChoosePlatform";
+import Spinner from "@/components/random/Spinner";
 import { VITE_API_JOIN_ENDPOINT } from "@/utils/constants";
-import { createSession } from "@/api/session";
+import { createSession } from "@/services/session";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 

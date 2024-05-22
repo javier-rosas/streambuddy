@@ -19,10 +19,11 @@
     "baseUrl": "./src",
     "paths": {
       "@/types": ["types/index.ts"],
-      "@/api/*": ["api/*"],
+      "@/services/*": ["services/*"],
       "@/utils/*": ["utils/*"],
       "@/constants": ["utils/constants.ts"],
-      "@/randomComponents": ["components/randomComponents.tsx"],
+      "@/components/*": ["components/*"],
+      "@/assets/*": ["assets/*"],
     }
   },
   "include": ["src"],

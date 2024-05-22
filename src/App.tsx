@@ -2,8 +2,8 @@ import "./App.css";
 
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
-import Home from "./home";
-import LandingExtension from "./landingExtension";
+import Home from "./components/home/Home";
+import LandingExtension from "./components/landing-page/LandingPage";
 
 export default function App() {
   return (
