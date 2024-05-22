@@ -1,3 +1,4 @@
+// Environment variables
 export const VITE_GOOGLE_AUTH_ENDPOINT = import.meta.env
   .VITE_GOOGLE_AUTH_ENDPOINT;
 
@@ -9,3 +10,8 @@ export const VITE_API_SESSION_ENDPOINT = import.meta.env
   .VITE_API_SESSION_ENDPOINT;
 
 export const VITE_API_JOIN_ENDPOINT = import.meta.env.VITE_API_JOIN_ENDPOINT;
+
+export const VITE_APP_EXTENSION_ID = import.meta.env.VITE_APP_EXTENSION_ID;
+
+// Constants
+export const NETFLIX_URL = "https://www.netflix.com";
