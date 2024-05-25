@@ -15,6 +15,20 @@ const setUserDataInLocalStorage = (
   localStorage.setItem("userData", JSON.stringify(userData));
   localStorage.setItem("userGoogleToken", userGoogleToken);
   localStorage.setItem("jwt", jwt); // Storing JWT for future use
+
+  // Set data in chrome.storage.local
+  chrome.storage.local.set({
+    userData: userData,
+  });
+};
+
+// set userData and userToken to null
+export const clearUserDataAndToken = () => {
+  localStorage.removeItem("userData");
+  localStorage.removeItem("userGoogleToken");
+  localStorage.removeItem("jwt");
+
+  chrome.storage.local.remove(["userData"]);
 };
 
 // Function to get user data from local storage
@@ -31,13 +45,6 @@ export const getUserGoogleToken = () => {
 // Function to get JWT from local storage
 export const getJwtToken = () => {
   return localStorage.getItem("jwt");
-};
-
-// set userData and userToken to null
-export const clearUserDataAndToken = () => {
-  localStorage.removeItem("userData");
-  localStorage.removeItem("userGoogleToken");
-  localStorage.removeItem("jwt");
 };
 
 // Function to logout user
