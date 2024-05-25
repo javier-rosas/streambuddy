@@ -29,7 +29,7 @@
     {
     "matches": [
       "*://*.streamtogether.io/*",
-      "*://*.localhost:3000/*"
+      "http://localhost:3000/*"
     ],
     "js": [
       "assets/contentScriptWebApp.js"
@@ -50,8 +50,7 @@
     "activeTab",
     "storage",
     "tabs",
-    "identity",
-    "runtime"
+    "identity"
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
