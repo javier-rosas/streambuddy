@@ -25,7 +25,18 @@
         "assets/contentScript.js"
       ],
       "type": "module"
+    },
+    {
+    "matches": [
+      "*://*.streamtogether.io/*",
+      "*://*.localhost:3000/*"
+    ],
+    "js": [
+      "assets/contentScriptWebApp.js"
+    ],
+    "type": "module"
     }
+
   ],
   "background": {
     "service_worker": "assets/background.js",
@@ -39,7 +50,8 @@
     "activeTab",
     "storage",
     "tabs",
-    "identity"
+    "identity",
+    "runtime"
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
