@@ -24,6 +24,7 @@
       "@/constants": ["utils/constants.ts"],
       "@/components/*": ["components/*"],
       "@/assets/*": ["assets/*"],
+      "@/extension-scripts/*": ["extension-scripts/*"],
     }
   },
   "include": ["src"],

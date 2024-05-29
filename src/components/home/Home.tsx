@@ -46,6 +46,10 @@ export default function Home() {
       });
   };
 
+  // useEffect(() => {
+  //   getLink();
+  // }, []);
+
   return (
     <>
       <button
