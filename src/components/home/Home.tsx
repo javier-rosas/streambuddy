@@ -33,6 +33,7 @@ export default function Home() {
     setIsSpinning(true);
     await new Promise((resolve) => setTimeout(resolve, 500)); // Wait for 0.5 seconds
     await getLink();
+    chrome.runtime.sendMessage({ type: "startStream", link });
     setIsSpinning(false);
   };
 
