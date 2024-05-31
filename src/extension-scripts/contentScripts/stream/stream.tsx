@@ -18,7 +18,7 @@ class StreamHandler {
   constructor() {
     chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
       if (message.type === "startStream") {
-        this.startStream(message.link);
+        // this.startStream(message.link);
         this.injectChoosePlatformComponent(message.link);
       }
     });
