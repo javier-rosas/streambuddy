@@ -12,12 +12,14 @@ class StreamHandler {
   private socket: any;
   private localStream: any;
   private peerConnection: any;
+  private selectedAudioDeviceId: string | null = null;
+  private selectedVideoDeviceId: string | null = null;
 
   constructor() {
     chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
       if (message.type === "startStream") {
         this.startStream(message.link);
-        this.injectChoosePlatformComponent();
+        this.injectChoosePlatformComponent(message.link);
       }
     });
   }
@@ -27,10 +29,16 @@ class StreamHandler {
     this.socket = io(VITE_API_BASE_ENDPOINT);
 
     try {
-      this.localStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
+      const constraints = {
+        video: this.selectedVideoDeviceId
+          ? { deviceId: this.selectedVideoDeviceId }
+          : true,
+        audio: this.selectedAudioDeviceId
+          ? { deviceId: this.selectedAudioDeviceId }
+          : true,
+      };
+
+      this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
     } catch (error) {
       console.error("Error accessing media devices:", error);
       return;
@@ -152,8 +160,16 @@ class StreamHandler {
   }
 
   // Inject Choose Platform component into the DOM
-  private injectChoosePlatformComponent() {
+  injectChoosePlatformComponent = async (link: string) => {
     console.log("Injecting ChooseSettings component");
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const audioInputs = devices.filter(
+      (device) => device.kind === "audioinput"
+    );
+    const videoInputs = devices.filter(
+      (device) => device.kind === "videoinput"
+    );
 
     const container = document.createElement("div");
     container.style.position = "fixed";
@@ -169,91 +185,108 @@ class StreamHandler {
     container.style.alignItems = "center";
     container.style.justifyContent = "center";
 
-    const label = document.createElement("label");
-    label.setAttribute("for", "audio");
-    label.classList.add("label");
-    label.textContent = "Audio";
+    const createSelectElement = (
+      labelText: string,
+      devices: MediaDeviceInfo[],
+      onChange: (event: Event) => void
+    ) => {
+      const label = document.createElement("label");
+      label.textContent = labelText;
+      label.classList.add("label");
 
-    const select = document.createElement("select");
-    select.id = "audio";
-    select.name = "audio";
-    select.classList.add("select");
+      const select = document.createElement("select");
+      select.classList.add("select");
 
-    const options = ["Option 1", "Option 2", "Option 3"];
-    options.forEach((option) => {
-      const optionElement = document.createElement("option");
-      optionElement.value = option;
-      optionElement.textContent = option;
-      select.appendChild(optionElement);
+      devices.forEach((device) => {
+        const option = document.createElement("option");
+        option.value = device.deviceId;
+        option.textContent =
+          device.label || `${labelText} ${devices.indexOf(device) + 1}`;
+        select.appendChild(option);
+      });
+
+      select.addEventListener("change", onChange);
+
+      container.appendChild(label);
+      container.appendChild(select);
+    };
+
+    createSelectElement("Audio Input", audioInputs, (event: Event) => {
+      this.selectedAudioDeviceId = (event.target as HTMLSelectElement).value;
     });
 
-    const button = document.createElement("button");
-    button.type = "button";
-    button.classList.add("custom-button");
-    button.textContent = "Button text";
+    createSelectElement("Video Input", videoInputs, (event: Event) => {
+      this.selectedVideoDeviceId = (event.target as HTMLSelectElement).value;
+    });
 
-    container.appendChild(label);
-    container.appendChild(select);
-    container.appendChild(button);
+    const startButton = document.createElement("button");
+    startButton.textContent = "Start Streaming";
+    startButton.classList.add("custom-button");
+
+    startButton.addEventListener("click", () => {
+      this.startStream(link);
+      document.body.removeChild(container);
+    });
+
+    container.appendChild(startButton);
+    document.body.appendChild(container);
 
     const style = document.createElement("style");
     style.textContent = `
-    .label {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 500;
-      line-height: 1.5;
-      color: #1f2937;
-      text-align: center;
-    }
-    .select {
-      margin-top: 0.5rem;
-      display: block;
-      width: 100%;
-      border-radius: 0.375rem;
-      border: none;
-      padding-top: 0.375rem;
-      padding-bottom: 0.375rem;
-      padding-left: 0.75rem;
-      padding-right: 2.5rem;
-      color: #1f2937;
-      box-shadow: inset 0 0 0 1px #d1d5db;
-    }
-    .select:focus {
-      outline: 2px solid transparent;
-      outline-offset: 2px;
-      box-shadow: inset 0 0 0 1px #6366f1, 0 0 0 2px #6366f1;
-    }
-    .select.sm {
-      font-size: 0.875rem;
-      line-height: 1.5;
-    }
-    .custom-button {
-      border-radius: 0.375rem; /* rounded-md */
-      background-color: #4f46e5; /* bg-indigo-600 */
-      padding-left: 0.75rem; /* px-3 */
-      padding-right: 0.75rem; /* px-3 */
-      padding-top: 0.5rem; /* py-2 */
-      padding-bottom: 0.5rem; /* py-2 */
-      font-size: 0.875rem; /* text-sm */
-      font-weight: 600; /* font-semibold */
-      color: #ffffff; /* text-white */
-      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
-      transition: background-color 0.3s; /* For smooth hover transition */
-      margin-top: 10px; /* Add some spacing between the select and button */
-    }
-    .custom-button:hover {
-      background-color: #4338ca; /* hover:bg-indigo-500 */
-    }
-    .custom-button:focus-visible {
-      outline: 2px solid #4f46e5; /* focus-visible:outline-indigo-600 */
-      outline-offset: 2px; /* focus-visible:outline-offset-2 */
-    }
-  `;
-    document.head.appendChild(style);
-
-    document.body.appendChild(container);
+  .label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #1f2937;
+    text-align: center;
   }
+  .select {
+    margin-top: 0.5rem;
+    display: block;
+    width: 100%;
+    border-radius: 0.375rem;
+    border: none;
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+    padding-left: 0.75rem;
+    padding-right: 2.5rem;
+    color: #1f2937;
+    box-shadow: inset 0 0 0 1px #d1d5db;
+  }
+  .select:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow: inset 0 0 0 1px #6366f1, 0 0 0 2px #6366f1;
+  }
+  .select.sm {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .custom-button {
+    border-radius: 0.375rem; /* rounded-md */
+    background-color: #4f46e5; /* bg-indigo-600 */
+    padding-left: 0.75rem; /* px-3 */
+    padding-right: 0.75rem; /* px-3 */
+    padding-top: 0.5rem; /* py-2 */
+    padding-bottom: 0.5rem; /* py-2 */
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 600; /* font-semibold */
+    color: #ffffff; /* text-white */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+    transition: background-color 0.3s; /* For smooth hover transition */
+    margin-top: 10px; /* Add some spacing between the select and button */
+  }
+  .custom-button:hover {
+    background-color: #4338ca; /* hover:bg-indigo-500 */
+  }
+  .custom-button:focus-visible {
+    outline: 2px solid #4f46e5; /* focus-visible:outline-indigo-600 */
+    outline-offset: 2px; /* focus-visible:outline-offset-2 */
+  }
+`;
+    document.head.appendChild(style);
+  };
 }
 
 // Export the StreamHandler class
