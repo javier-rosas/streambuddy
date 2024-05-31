@@ -1,5 +1,7 @@
+import StreamHandler from "./stream/stream";
 import { netflixMain } from "./netflix/contentScript";
-import { streamMain } from "./stream/stream";
 
 netflixMain();
-streamMain();
+
+const streamHandler = new StreamHandler();
+streamHandler.startStream();
