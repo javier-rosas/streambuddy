@@ -6,7 +6,7 @@ export function handleStartStream(message, sender, sendResponse) {
       tabs.forEach((tab) => {
         chrome.tabs.sendMessage(tab.id, {
           type: "startStream",
-          userId: message.userId,
+          link: message.link,
         });
       });
     });

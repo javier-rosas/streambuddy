@@ -21,7 +21,6 @@ export default function Home() {
     try {
       const session = await createSession(jwt, user.email);
       if (!session || !session.link) return;
-      console.log("session", session.link);
       setLink(session.link);
       return session.link;
     } catch (error) {
@@ -32,8 +31,8 @@ export default function Home() {
   const handleButtonClick = async () => {
     setIsSpinning(true);
     await new Promise((resolve) => setTimeout(resolve, 500)); // Wait for 0.5 seconds
-    await getLink();
-    chrome.runtime.sendMessage({ type: "startStream", link });
+    const link = await getLink();
+    chrome.runtime.sendMessage({ type: "startStream", link: link });
     setIsSpinning(false);
   };
 
