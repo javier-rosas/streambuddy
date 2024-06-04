@@ -59,7 +59,10 @@ export const logout = (navigate: any) => {
         return;
       }
       clearUserDataAndToken();
-      navigate("/");
+      chrome.identity.clearAllCachedAuthTokens(() => {
+        console.log("Cleared cached auth tokens");
+        navigate("/");
+      });
     }
   );
 };

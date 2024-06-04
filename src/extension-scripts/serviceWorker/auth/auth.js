@@ -16,10 +16,27 @@ export function handleAuthToken(message, sender, sendResponse) {
         if (chrome.runtime.lastError) {
           console.error("Logout failed:", chrome.runtime.lastError);
         } else {
+          revokeTokenFromServer(message.token);
           sendResponse({ success: true });
         }
       }
     );
     return true; // Indicates that the response is sent asynchronously
   }
+}
+
+// Function to revoke token from the server side
+function revokeTokenFromServer(token) {
+  const revokeUrl = `https://accounts.google.com/o/oauth2/revoke?token=${token}`;
+  fetch(revokeUrl, { method: "POST" })
+    .then((response) => {
+      if (response.ok) {
+        console.log("Token successfully revoked");
+      } else {
+        console.error("Failed to revoke token");
+      }
+    })
+    .catch((error) => {
+      console.error("Error revoking token:", error);
+    });
 }
