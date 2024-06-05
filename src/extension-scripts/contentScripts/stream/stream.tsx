@@ -17,6 +17,7 @@ class StreamHandler {
   private selectedVideoDeviceId: string | null = null;
   private remoteVideoElement: HTMLVideoElement | null = null;
   private pendingCandidates: RTCIceCandidate[] = [];
+  private localVideoElement: HTMLVideoElement | null = null;
 
   constructor() {
     chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
@@ -47,6 +48,7 @@ class StreamHandler {
       };
 
       this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
+      this.displayStream(this.localStream, false);
     } catch (error) {
       console.error("Error accessing media devices:", error);
       return;
@@ -178,7 +180,7 @@ class StreamHandler {
 
     this.peerConnection.ontrack = (event: RTCTrackEvent) => {
       console.log("Received remote stream");
-      this.displayRemoteStream(event.streams[0]);
+      this.displayStream(event.streams[0], true);
     };
 
     this.peerConnection.oniceconnectionstatechange = () => {
@@ -258,14 +260,13 @@ class StreamHandler {
     }
   }
 
-  // Display the remote stream in a video element
-  private displayRemoteStream(stream: MediaStream) {
+  private displayStream(stream: MediaStream, isRemote: boolean) {
     if (!stream) {
       console.error("Invalid MediaStream provided");
       return;
     }
 
-    console.log("Displaying remote stream", stream);
+    console.log("Displaying stream", stream);
 
     // Check if the stream has any tracks
     const videoTrack = stream.getVideoTracks()[0];
@@ -358,6 +359,34 @@ class StreamHandler {
 
     // Update the video element's srcObject if it already exists
     this.remoteVideoElement.srcObject = stream;
+
+    if (isRemote) {
+      // Handle local stream for picture-in-picture
+      if (!this.localVideoElement) {
+        this.localVideoElement = document.createElement("video");
+        this.localVideoElement.autoplay = true;
+        this.localVideoElement.muted = true; // Mute local video to avoid feedback
+        this.localVideoElement.style.position = "absolute";
+        this.localVideoElement.style.width = "100px";
+        this.localVideoElement.style.height = "auto";
+        this.localVideoElement.style.bottom = "10px";
+        this.localVideoElement.style.left = "10px";
+        this.localVideoElement.style.borderRadius = "15px";
+        this.localVideoElement.style.zIndex = "10000";
+
+        if (this.remoteVideoElement.parentElement) {
+          // Append the local video element to the container
+          this.remoteVideoElement.parentElement.appendChild(
+            this.localVideoElement
+          );
+        }
+      }
+
+      // Get the local stream (assuming you have a method to get it)
+      if (this.localStream) {
+        this.localVideoElement.srcObject = this.localStream;
+      }
+    }
 
     // Log stream information for debugging
     console.log("Stream tracks:", stream.getTracks());
