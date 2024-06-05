@@ -1,3 +1,4 @@
+import { choosePlatformComponentStyles } from "./helpers";
 const VITE_API_BASE_ENDPOINT = import.meta.env.VITE_API_BASE_ENDPOINT;
 
 let io: any;
@@ -79,6 +80,85 @@ class StreamHandler {
       await this.addIceCandidate(data);
     });
   }
+
+  // Inject Choose Platform component into the DOM
+  private injectChoosePlatformComponent = async (link: string) => {
+    console.log("Injecting ChooseSettings component");
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const audioInputs = devices.filter(
+      (device) => device.kind === "audioinput"
+    );
+    const videoInputs = devices.filter(
+      (device) => device.kind === "videoinput"
+    );
+
+    const container = document.createElement("div");
+    container.classList.add("custom-container");
+    container.style.position = "fixed";
+    container.style.top = "10px";
+    container.style.right = "10px";
+    container.style.backgroundColor = "white";
+    container.style.padding = "10px";
+    container.style.borderRadius = "8px";
+    container.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.1)";
+    container.style.zIndex = "1000";
+    container.style.display = "flex";
+    container.style.flexDirection = "column";
+    container.style.alignItems = "center";
+    container.style.justifyContent = "center";
+
+    const createSelectElement = (
+      labelText: string,
+      devices: MediaDeviceInfo[],
+      onChange: (event: Event) => void
+    ) => {
+      const label = document.createElement("label");
+      label.textContent = labelText;
+      label.classList.add("label");
+
+      const select = document.createElement("select");
+      select.classList.add("select");
+
+      devices.forEach((device) => {
+        const option = document.createElement("option");
+        option.value = device.deviceId;
+        option.textContent =
+          device.label || `${labelText} ${devices.indexOf(device) + 1}`;
+        select.appendChild(option);
+      });
+
+      select.addEventListener("change", onChange);
+
+      container.appendChild(label);
+      container.appendChild(select);
+    };
+
+    createSelectElement("Audio Input", audioInputs, (event: Event) => {
+      this.selectedAudioDeviceId = (event.target as HTMLSelectElement).value;
+    });
+
+    createSelectElement("Video Input", videoInputs, (event: Event) => {
+      this.selectedVideoDeviceId = (event.target as HTMLSelectElement).value;
+    });
+
+    const startButton = document.createElement("button");
+    startButton.textContent = "Start Streaming";
+    startButton.classList.add("custom-button");
+
+    startButton.addEventListener("click", () => {
+      this.startStream(link);
+      document.body.removeChild(container);
+    });
+
+    container.appendChild(startButton);
+    document.body.appendChild(container);
+
+    const style = document.createElement("style");
+    style.classList.add("custom-style");
+    style.textContent = choosePlatformComponentStyles;
+    document.head.appendChild(style);
+  };
 
   // Initialize the peer connection
   private async initializePeerConnection(link: string) {
@@ -310,137 +390,6 @@ class StreamHandler {
       console.log("Video track ended");
     };
   }
-
-  // Inject Choose Platform component into the DOM
-  private injectChoosePlatformComponent = async (link: string) => {
-    console.log("Injecting ChooseSettings component");
-
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const audioInputs = devices.filter(
-      (device) => device.kind === "audioinput"
-    );
-    const videoInputs = devices.filter(
-      (device) => device.kind === "videoinput"
-    );
-
-    const container = document.createElement("div");
-    container.classList.add("custom-container");
-    container.style.position = "fixed";
-    container.style.top = "10px";
-    container.style.right = "10px";
-    container.style.backgroundColor = "white";
-    container.style.padding = "10px";
-    container.style.borderRadius = "8px";
-    container.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.1)";
-    container.style.zIndex = "1000";
-    container.style.display = "flex";
-    container.style.flexDirection = "column";
-    container.style.alignItems = "center";
-    container.style.justifyContent = "center";
-
-    const createSelectElement = (
-      labelText: string,
-      devices: MediaDeviceInfo[],
-      onChange: (event: Event) => void
-    ) => {
-      const label = document.createElement("label");
-      label.textContent = labelText;
-      label.classList.add("label");
-
-      const select = document.createElement("select");
-      select.classList.add("select");
-
-      devices.forEach((device) => {
-        const option = document.createElement("option");
-        option.value = device.deviceId;
-        option.textContent =
-          device.label || `${labelText} ${devices.indexOf(device) + 1}`;
-        select.appendChild(option);
-      });
-
-      select.addEventListener("change", onChange);
-
-      container.appendChild(label);
-      container.appendChild(select);
-    };
-
-    createSelectElement("Audio Input", audioInputs, (event: Event) => {
-      this.selectedAudioDeviceId = (event.target as HTMLSelectElement).value;
-    });
-
-    createSelectElement("Video Input", videoInputs, (event: Event) => {
-      this.selectedVideoDeviceId = (event.target as HTMLSelectElement).value;
-    });
-
-    const startButton = document.createElement("button");
-    startButton.textContent = "Start Streaming";
-    startButton.classList.add("custom-button");
-
-    startButton.addEventListener("click", () => {
-      this.startStream(link);
-      document.body.removeChild(container);
-    });
-
-    container.appendChild(startButton);
-    document.body.appendChild(container);
-
-    const style = document.createElement("style");
-    style.classList.add("custom-style");
-    style.textContent = `
-  .label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1.5;
-    color: #1f2937;
-    text-align: center;
-  }
-  .select {
-    margin-top: 0.5rem;
-    display: block;
-    width: 100%;
-    border-radius: 0.375rem;
-    border: none;
-    padding-top: 0.375rem;
-    padding-bottom: 0.375rem;
-    padding-left: 0.75rem;
-    padding-right: 2.5rem;
-    color: #1f2937;
-    box-shadow: inset 0 0 0 1px #d1d5db;
-  }
-  .select:focus {
-    outline: 2px solid transparent;
-    outline-offset: 2px;
-    box-shadow: inset 0 0 0 1px #6366f1, 0 0 0 2px #6366f1;
-  }
-  .select.sm {
-    font-size: 0.875rem;
-    line-height: 1.5;
-  }
-  .custom-button {
-    border-radius: 0.375rem; /* rounded-md */
-    background-color: #4f46e5; /* bg-indigo-600 */
-    padding-left: 0.75rem; /* px-3 */
-    padding-right: 0.75rem; /* px-3 */
-    padding-top: 0.5rem; /* py-2 */
-    padding-bottom: 0.5rem; /* py-2 */
-    font-size: 0.875rem; /* text-sm */
-    font-weight: 600; /* font-semibold */
-    color: #ffffff; /* text-white */
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
-    transition: background-color 0.3s; /* For smooth hover transition */
-    margin-top: 10px; /* Add some spacing between the select and button */
-  }
-  .custom-button:hover {
-    background-color: #4338ca; /* hover:bg-indigo-500 */
-  }
-  .custom-button:focus-visible {
-    outline: 2px solid #4f46e5; /* focus-visible:outline-indigo-600 */
-    outline-offset: 2px; /* focus-visible:outline-offset-2 */
-  }
-  `;
-    document.head.appendChild(style);
-  };
 }
 
 // Run the constructor
