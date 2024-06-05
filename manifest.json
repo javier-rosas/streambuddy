@@ -27,14 +27,23 @@
       "type": "module"
     },
     {
-    "matches": [
-      "*://*.streamtogether.io/*",
-      "http://localhost:3000/*"
-    ],
-    "js": [
-      "assets/contentScriptWebApp.js"
-    ],
-    "type": "module"
+      "matches": [
+        "*://*.streamtogether.io/*",
+        "http://localhost:3000/*"
+      ],
+      "js": [
+        "assets/contentScriptWebApp.js"
+      ],
+      "type": "module"
+    },
+    {
+      "matches": [
+        "*://*.netflix.com/*"
+      ],
+      "js": [
+        "assets/streamingContentScript.js"
+      ],
+      "type": "module"
     }
   ],
   "background": {

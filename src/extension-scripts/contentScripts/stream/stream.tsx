@@ -443,5 +443,5 @@ class StreamHandler {
   };
 }
 
-// Export the StreamHandler class
-export default StreamHandler;
+// Run the constructor
+new StreamHandler();
