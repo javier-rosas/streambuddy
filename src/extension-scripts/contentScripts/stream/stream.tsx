@@ -1,13 +1,7 @@
 import { choosePlatformComponentStyles } from "./helpers";
-const VITE_API_BASE_ENDPOINT = import.meta.env.VITE_API_BASE_ENDPOINT;
+import { io } from "socket.io-client";
 
-let io: any;
-(async () => {
-  const socketio = await import("socket.io-client");
-  io = socketio.default;
-  // console log timestamp when socket.io-client is loaded
-  console.log("socket.io-client loaded at", new Date().toLocaleTimeString());
-})();
+const VITE_API_BASE_ENDPOINT = import.meta.env.VITE_API_BASE_ENDPOINT;
 
 class StreamHandler {
   private socket: any;
@@ -281,19 +275,120 @@ class StreamHandler {
       container.style.top = "10px";
       container.style.right = "10px";
       container.style.zIndex = "9999";
-      container.style.backgroundColor = "transparent"; // Remove background color
-      container.style.padding = "0"; // Remove padding
-      container.style.border = "none"; // Remove border
+      container.style.backgroundColor = "transparent";
+      container.style.padding = "0";
+      container.style.border = "none";
 
       this.remoteVideoElement = document.createElement("video");
       this.remoteVideoElement.autoplay = true;
-      this.remoteVideoElement.style.width = "300px"; // Ensure the video has dimensions
-      this.remoteVideoElement.style.height = "auto"; // Maintain aspect ratio
-      this.remoteVideoElement.style.borderRadius = "15px"; // Rounded corners
+      this.remoteVideoElement.style.width = "300px";
+      this.remoteVideoElement.style.height = "auto";
+      this.remoteVideoElement.style.borderRadius = "15px";
 
-      // Append the video element to the container
+      // Create alert container
+      const alertContainer = document.createElement("div");
+      alertContainer.classList.add("alert-container");
+      alertContainer.style.width = "300px"; // Same width as the video
+      alertContainer.style.height = "auto"; // Adjust height based on content
+      alertContainer.style.borderRadius = "15px"; // Same rounded corners as the video
+
+      alertContainer.innerHTML = `
+  <div class="alert-content">
+    <div class="icon-container">
+      <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+      </svg>
+    </div>
+    <div class="text-content">
+      <p class="alert-text">Waiting for your partner...</p>
+    </div>
+  </div>
+`;
+
+      // Append the video and alert elements to the container
       container.appendChild(this.remoteVideoElement);
+      container.appendChild(alertContainer);
       document.body.appendChild(container);
+
+      // CSS styles
+      const style = document.createElement("style");
+      style.innerHTML = `
+  .alert-container {
+    background-color: #ebf8ff;
+    border-radius: 15px; /* Match the video's rounded corners */
+    padding: 1rem;
+    margin-top: 5px; /* Add some space between the video and the alert */
+    box-sizing: border-box; /* Ensure padding is included in the width */
+    animation: pulsate 1.5s infinite; /* Add pulsating animation */
+  }
+
+  .alert-content {
+    display: flex;
+    align-items: center; /* Center items vertically */
+  }
+
+  .icon-container {
+    flex-shrink: 0;
+  }
+
+  .icon {
+    height: 1.25rem;
+    width: 1.25rem;
+    color: #63b3ed;
+  }
+
+  .text-content {
+    margin-left: 0.75rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center text vertically */
+  }
+
+  .alert-text {
+    font-size: 1rem;
+    color: #2b6cb0;
+  }
+
+  .alert-link-container {
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    color: #2b6cb0;
+  }
+
+  .alert-link {
+    font-weight: 500;
+    color: #2b6cb0;
+    text-decoration: none;
+  }
+
+  .alert-link:hover {
+    color: #2c5282;
+  }
+
+  @media (min-width: 768px) {
+    .alert-link-container {
+      margin-top: 0;
+      margin-left: 1.5rem;
+    }
+  }
+
+  @keyframes pulsate {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.7;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+`;
+      document.head.appendChild(style);
 
       // Add event listeners to make the video draggable
       container.onmousedown = function (event) {
@@ -363,6 +458,11 @@ class StreamHandler {
     if (isRemote) {
       // Handle local stream for picture-in-picture
       if (!this.localVideoElement) {
+        // Remove the alert container
+        const alertContainer = document.querySelector(".alert-container");
+        if (alertContainer) {
+          alertContainer.remove();
+        }
         this.localVideoElement = document.createElement("video");
         this.localVideoElement.autoplay = true;
         this.localVideoElement.muted = true; // Mute local video to avoid feedback
