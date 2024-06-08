@@ -86,3 +86,69 @@ export const logStreamInfo = (stream: MediaStream) => {
 export const logVideoElementReadyState = (videoElement: HTMLVideoElement) => {
   console.log("Video element readyState:", videoElement.readyState);
 };
+
+export const createContainer = (): HTMLDivElement => {
+  const container = document.createElement("div");
+  container.style.position = "fixed";
+  container.style.top = "10px";
+  container.style.right = "10px";
+  container.style.zIndex = "9999";
+  container.style.backgroundColor = "transparent";
+  container.style.padding = "0";
+  container.style.border = "none";
+  return container;
+};
+
+export const createRemoteVideoElement = (): HTMLVideoElement => {
+  const remoteVideoElement = document.createElement("video");
+  remoteVideoElement.autoplay = true;
+  remoteVideoElement.style.width = "300px";
+  remoteVideoElement.style.height = "auto";
+  remoteVideoElement.style.borderRadius = "15px";
+  return remoteVideoElement;
+};
+
+export const createAlertContainer = (
+  alertContainerHtml: string
+): HTMLDivElement => {
+  const alertContainer = document.createElement("div");
+  alertContainer.classList.add("alert-container");
+  alertContainer.style.width = "300px"; // Same width as the video
+  alertContainer.style.height = "auto"; // Adjust height based on content
+  alertContainer.style.borderRadius = "15px"; // Same rounded corners as the video
+  alertContainer.innerHTML = alertContainerHtml;
+  return alertContainer;
+};
+
+export const applyAlertContainerCss = (alertContainerCss: string): void => {
+  const style = document.createElement("style");
+  style.innerHTML = alertContainerCss;
+  document.head.appendChild(style);
+};
+
+export const makeVideoDraggable = (container: HTMLDivElement): void => {
+  container.onmousedown = function (event) {
+    let shiftX = event.clientX - container.getBoundingClientRect().left;
+    let shiftY = event.clientY - container.getBoundingClientRect().top;
+
+    function moveAt(pageX: number, pageY: number) {
+      container.style.left = pageX - shiftX + "px";
+      container.style.top = pageY - shiftY + "px";
+    }
+
+    function onMouseMove(event: MouseEvent) {
+      moveAt(event.pageX, event.pageY);
+    }
+
+    document.addEventListener("mousemove", onMouseMove);
+
+    container.onmouseup = function () {
+      document.removeEventListener("mousemove", onMouseMove);
+      container.onmouseup = null;
+    };
+
+    container.ondragstart = function () {
+      return false;
+    };
+  };
+};

@@ -4,6 +4,10 @@ import {
   choosePlatformComponentStyles,
 } from "./styles";
 import {
+  applyAlertContainerCss,
+  createAlertContainer,
+  createContainer,
+  createRemoteVideoElement,
   createSelectElement,
   handleVideoEnded,
   handleVideoError,
@@ -15,6 +19,7 @@ import {
   handleVideoTrackUnmute,
   logStreamInfo,
   logVideoElementReadyState,
+  makeVideoDraggable,
 } from "./helpers";
 
 import { io } from "socket.io-client";
@@ -42,14 +47,8 @@ class StreamHandler {
 
   // Function to start the streaming process
   private async startStream(link: string) {
-    // TODO: change this into its own content-script
     try {
       this.socket = io(VITE_API_BASE_ENDPOINT);
-    } catch (e) {
-      console.log(e);
-    }
-
-    try {
       const constraints = {
         video: this.selectedVideoDeviceId
           ? { deviceId: this.selectedVideoDeviceId }
@@ -61,10 +60,11 @@ class StreamHandler {
 
       this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
       this.displayStream(this.localStream, false);
-    } catch (error) {
-      console.error("Error accessing media devices:", error);
+    } catch (e) {
+      console.error("Error accessing media devices:", e);
       return;
     }
+
     console.log("message link 3", link);
     this.socket.emit("join-room", { link });
 
@@ -272,65 +272,21 @@ class StreamHandler {
     }
 
     if (!this.remoteVideoElement) {
-      const container = document.createElement("div");
-      container.style.position = "fixed";
-      container.style.top = "10px";
-      container.style.right = "10px";
-      container.style.zIndex = "9999";
-      container.style.backgroundColor = "transparent";
-      container.style.padding = "0";
-      container.style.border = "none";
+      const container = createContainer();
+      this.remoteVideoElement = createRemoteVideoElement();
 
-      this.remoteVideoElement = document.createElement("video");
-      this.remoteVideoElement.autoplay = true;
-      this.remoteVideoElement.style.width = "300px";
-      this.remoteVideoElement.style.height = "auto";
-      this.remoteVideoElement.style.borderRadius = "15px";
-
-      // Create alert container
-      const alertContainer = document.createElement("div");
-      alertContainer.classList.add("alert-container");
-      alertContainer.style.width = "300px"; // Same width as the video
-      alertContainer.style.height = "auto"; // Adjust height based on content
-      alertContainer.style.borderRadius = "15px"; // Same rounded corners as the video
-
-      alertContainer.innerHTML = alertContainerHtml;
+      const alertContainer = createAlertContainer(alertContainerHtml);
 
       // Append the video and alert elements to the container
       container.appendChild(this.remoteVideoElement);
       container.appendChild(alertContainer);
       document.body.appendChild(container);
 
-      // CSS styles
-      const style = document.createElement("style");
-      style.innerHTML = alertContainerCss;
-      document.head.appendChild(style);
+      // Apply CSS styles
+      applyAlertContainerCss(alertContainerCss);
 
       // Add event listeners to make the video draggable
-      container.onmousedown = function (event) {
-        let shiftX = event.clientX - container.getBoundingClientRect().left;
-        let shiftY = event.clientY - container.getBoundingClientRect().top;
-
-        function moveAt(pageX: number, pageY: number) {
-          container.style.left = pageX - shiftX + "px";
-          container.style.top = pageY - shiftY + "px";
-        }
-
-        function onMouseMove(event: MouseEvent) {
-          moveAt(event.pageX, event.pageY);
-        }
-
-        document.addEventListener("mousemove", onMouseMove);
-
-        container.onmouseup = function () {
-          document.removeEventListener("mousemove", onMouseMove);
-          container.onmouseup = null;
-        };
-
-        container.ondragstart = function () {
-          return false;
-        };
-      };
+      makeVideoDraggable(container);
 
       // Log the video element for debugging
       console.log("Video element added to DOM:", this.remoteVideoElement);
