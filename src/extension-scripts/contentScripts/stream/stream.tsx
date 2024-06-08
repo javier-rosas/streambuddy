@@ -7,6 +7,7 @@ import {
   applyAlertContainerCss,
   createAlertContainer,
   createContainer,
+  createLocalVideoElement,
   createRemoteVideoElement,
   createSelectElement,
   handleVideoEnded,
@@ -311,16 +312,7 @@ class StreamHandler {
         if (alertContainer) {
           alertContainer.remove();
         }
-        this.localVideoElement = document.createElement("video");
-        this.localVideoElement.autoplay = true;
-        this.localVideoElement.muted = true; // Mute local video to avoid feedback
-        this.localVideoElement.style.position = "absolute";
-        this.localVideoElement.style.width = "100px";
-        this.localVideoElement.style.height = "auto";
-        this.localVideoElement.style.bottom = "10px";
-        this.localVideoElement.style.left = "10px";
-        this.localVideoElement.style.borderRadius = "15px";
-        this.localVideoElement.style.zIndex = "10000";
+        this.localVideoElement = createLocalVideoElement();
 
         if (this.remoteVideoElement.parentElement) {
           // Append the local video element to the container

@@ -120,6 +120,20 @@ export const createAlertContainer = (
   return alertContainer;
 };
 
+export const createLocalVideoElement = (): HTMLVideoElement => {
+  const localVideoElement = document.createElement("video");
+  localVideoElement.autoplay = true;
+  localVideoElement.muted = true; // Mute local video to avoid feedback
+  localVideoElement.style.position = "absolute";
+  localVideoElement.style.width = "100px";
+  localVideoElement.style.height = "auto";
+  localVideoElement.style.bottom = "10px";
+  localVideoElement.style.left = "10px";
+  localVideoElement.style.borderRadius = "15px";
+  localVideoElement.style.zIndex = "10000";
+  return localVideoElement;
+};
+
 export const applyAlertContainerCss = (alertContainerCss: string): void => {
   const style = document.createElement("style");
   style.innerHTML = alertContainerCss;
