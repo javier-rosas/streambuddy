@@ -311,9 +311,7 @@ class StreamHandler {
       }
 
       // Get the local stream (assuming you have a method to get it)
-      if (this.localStream) {
-        this.localVideoElement.srcObject = this.localStream;
-      }
+      if (this.localStream) this.localVideoElement.srcObject = this.localStream;
     }
 
     // Log stream information for debugging
