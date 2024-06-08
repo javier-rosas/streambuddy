@@ -6,6 +6,7 @@ import {
 import {
   applyAlertContainerCss,
   createAlertContainer,
+  createChoosePlatformContainer,
   createContainer,
   createLocalVideoElement,
   createRemoteVideoElement,
@@ -108,20 +109,7 @@ class StreamHandler {
       (device) => device.kind === "videoinput"
     );
 
-    const container = document.createElement("div");
-    container.classList.add("custom-container");
-    container.style.position = "fixed";
-    container.style.top = "10px";
-    container.style.right = "10px";
-    container.style.backgroundColor = "white";
-    container.style.padding = "10px";
-    container.style.borderRadius = "8px";
-    container.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.1)";
-    container.style.zIndex = "1000";
-    container.style.display = "flex";
-    container.style.flexDirection = "column";
-    container.style.alignItems = "center";
-    container.style.justifyContent = "center";
+    const container = createChoosePlatformContainer();
 
     createSelectElement(
       "Audio Input",
