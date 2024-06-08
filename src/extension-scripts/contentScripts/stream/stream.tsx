@@ -3,8 +3,20 @@ import {
   alertContainerHtml,
   choosePlatformComponentStyles,
 } from "./styles";
+import {
+  createSelectElement,
+  handleVideoEnded,
+  handleVideoError,
+  handleVideoMetadataLoaded,
+  handleVideoPause,
+  handleVideoPlaying,
+  handleVideoTrackEnded,
+  handleVideoTrackMute,
+  handleVideoTrackUnmute,
+  logStreamInfo,
+  logVideoElementReadyState,
+} from "./helpers";
 
-import { createSelectElement } from "./helpers";
 import { io } from "socket.io-client";
 
 const VITE_API_BASE_ENDPOINT = import.meta.env.VITE_API_BASE_ENDPOINT;
@@ -323,37 +335,13 @@ class StreamHandler {
       // Log the video element for debugging
       console.log("Video element added to DOM:", this.remoteVideoElement);
 
-      // Add loadedmetadata event listener
-      this.remoteVideoElement.onloadedmetadata = () => {
-        console.log("Video metadata loaded, attempting to play...");
-        if (!this.remoteVideoElement) return;
+      this.remoteVideoElement.onloadedmetadata = handleVideoMetadataLoaded(
         this.remoteVideoElement
-          .play()
-          .then(() => {
-            console.log("Video is playing");
-          })
-          .catch((error) => {
-            console.error("Error playing video:", error);
-          });
-      };
-
-      // Add error event listener
-      this.remoteVideoElement.onerror = (event) => {
-        console.error("Error occurred in video element:", event);
-      };
-
-      // Add event listener for visibility
-      this.remoteVideoElement.onplaying = () => {
-        console.log("Video is playing");
-      };
-
-      this.remoteVideoElement.onpause = () => {
-        console.log("Video is paused");
-      };
-
-      this.remoteVideoElement.onended = () => {
-        console.log("Video has ended");
-      };
+      );
+      this.remoteVideoElement.onerror = handleVideoError;
+      this.remoteVideoElement.onplaying = handleVideoPlaying;
+      this.remoteVideoElement.onpause = handleVideoPause;
+      this.remoteVideoElement.onended = handleVideoEnded;
     }
 
     // Update the video element's srcObject if it already exists
@@ -393,35 +381,13 @@ class StreamHandler {
     }
 
     // Log stream information for debugging
-    console.log("Stream tracks:", stream.getTracks());
-    stream.getTracks().forEach((track) => {
-      console.log(
-        `Track kind: ${track.kind}, enabled: ${track.enabled}, readyState: ${track.readyState}`
-      );
-      // Ensure the video track is enabled
-      if (track.kind === "video") {
-        track.enabled = true;
-      }
-    });
-
-    // Check the video element's ready state
-    console.log(
-      "Video element readyState:",
-      this.remoteVideoElement.readyState
-    );
+    logStreamInfo(stream);
+    logVideoElementReadyState(this.remoteVideoElement);
 
     // Add track event listeners
-    videoTrack.onunmute = () => {
-      console.log("Video track unmuted");
-    };
-
-    videoTrack.onmute = () => {
-      console.log("Video track muted");
-    };
-
-    videoTrack.onended = () => {
-      console.log("Video track ended");
-    };
+    videoTrack.onunmute = handleVideoTrackUnmute;
+    videoTrack.onmute = handleVideoTrackMute;
+    videoTrack.onended = handleVideoTrackEnded;
   }
 }
 
