@@ -93,6 +93,7 @@ export const createContainer = (): HTMLDivElement => {
   container.style.top = "10px";
   container.style.right = "10px";
   container.style.zIndex = "9999";
+  container.style.maxWidth = "300px";
   container.style.backgroundColor = "transparent";
   container.style.padding = "0";
   container.style.border = "none";
