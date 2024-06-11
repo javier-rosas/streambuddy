@@ -9,7 +9,7 @@ export const createSession = async (
   userEmail: string
 ): Promise<any> => {
   try {
-    const response = await fetch(VITE_API_SESSION_ENDPOINT, {
+    const response = await fetch(VITE_API_SESSION_ENDPOINT || "", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,

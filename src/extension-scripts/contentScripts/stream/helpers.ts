@@ -1,3 +1,97 @@
+import interact from "interactjs";
+
+export const createContainer = (): HTMLDivElement => {
+  const container = document.createElement("div");
+  container.style.position = "fixed";
+  container.style.top = "10px";
+  container.style.right = "10px";
+  container.style.zIndex = "9999";
+  container.style.maxWidth = "300px";
+  container.style.backgroundColor = "transparent";
+  container.style.padding = "0";
+  container.style.border = "none";
+  return container;
+};
+
+export const createRemoteVideoElement = (): HTMLVideoElement => {
+  const remoteVideoElement = document.createElement("video");
+  remoteVideoElement.autoplay = true;
+  remoteVideoElement.style.width = "300px";
+  remoteVideoElement.style.height = "auto";
+  remoteVideoElement.style.borderRadius = "15px";
+  remoteVideoElement.style.position = "relative"; // Ensure relative positioning
+  return remoteVideoElement;
+};
+
+export const createAlertContainer = (
+  alertContainerHtml: string
+): HTMLDivElement => {
+  const alertContainer = document.createElement("div");
+  alertContainer.classList.add("alert-container");
+  alertContainer.style.width = "300px"; // Same width as the video
+  alertContainer.style.height = "auto"; // Adjust height based on content
+  alertContainer.style.borderRadius = "15px"; // Same rounded corners as the video
+  alertContainer.innerHTML = alertContainerHtml;
+  return alertContainer;
+};
+
+export const createLocalVideoElement = (): HTMLVideoElement => {
+  const localVideoElement = document.createElement("video");
+  localVideoElement.autoplay = true;
+  localVideoElement.muted = true; // Mute local video to avoid feedback
+  localVideoElement.style.position = "absolute";
+  localVideoElement.style.width = "100px";
+  localVideoElement.style.height = "auto";
+  localVideoElement.style.bottom = "10px";
+  localVideoElement.style.left = "10px";
+  localVideoElement.style.borderRadius = "15px";
+  localVideoElement.style.zIndex = "10000";
+  return localVideoElement;
+};
+
+export const applyAlertContainerCss = (alertContainerCss: string): void => {
+  const style = document.createElement("style");
+  style.innerHTML = alertContainerCss;
+  document.head.appendChild(style);
+};
+
+export const makeVideoDraggable = (container: HTMLDivElement): void => {
+  interact(container).draggable({
+    listeners: {
+      move(event) {
+        const target = event.target;
+        const x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
+        const y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
+
+        target.style.transform = `translate(${x}px, ${y}px)`;
+        target.setAttribute("data-x", x.toString());
+        target.setAttribute("data-y", y.toString());
+      },
+    },
+  });
+};
+
+export const makeRemoteVideoResizable = (
+  remoteVideoElement: HTMLVideoElement,
+  localVideoElement: HTMLVideoElement
+): void => {
+  interact(remoteVideoElement).resizable({
+    edges: { top: false, left: false, bottom: true, right: true },
+    listeners: {
+      move(event) {
+        const { width, height } = event.rect;
+        const target = event.target;
+        target.style.width = `${width}px`;
+        target.style.height = `${height}px`;
+
+        // Ensure local video stays at the bottom left corner
+        localVideoElement.style.bottom = "10px";
+        localVideoElement.style.left = "10px";
+      },
+    },
+  });
+};
+
 export const createSelectElement = (
   labelText: string,
   devices: MediaDeviceInfo[],
@@ -87,86 +181,86 @@ export const logVideoElementReadyState = (videoElement: HTMLVideoElement) => {
   console.log("Video element readyState:", videoElement.readyState);
 };
 
-export const createContainer = (): HTMLDivElement => {
-  const container = document.createElement("div");
-  container.style.position = "fixed";
-  container.style.top = "10px";
-  container.style.right = "10px";
-  container.style.zIndex = "9999";
-  container.style.maxWidth = "300px";
-  container.style.backgroundColor = "transparent";
-  container.style.padding = "0";
-  container.style.border = "none";
-  return container;
-};
+// export const createContainer = (): HTMLDivElement => {
+//   const container = document.createElement("div");
+//   container.style.position = "fixed";
+//   container.style.top = "10px";
+//   container.style.right = "10px";
+//   container.style.zIndex = "9999";
+//   container.style.maxWidth = "300px";
+//   container.style.backgroundColor = "transparent";
+//   container.style.padding = "0";
+//   container.style.border = "none";
+//   return container;
+// };
 
-export const createRemoteVideoElement = (): HTMLVideoElement => {
-  const remoteVideoElement = document.createElement("video");
-  remoteVideoElement.autoplay = true;
-  remoteVideoElement.style.width = "300px";
-  remoteVideoElement.style.height = "auto";
-  remoteVideoElement.style.borderRadius = "15px";
-  return remoteVideoElement;
-};
+// export const createRemoteVideoElement = (): HTMLVideoElement => {
+//   const remoteVideoElement = document.createElement("video");
+//   remoteVideoElement.autoplay = true;
+//   remoteVideoElement.style.width = "300px";
+//   remoteVideoElement.style.height = "auto";
+//   remoteVideoElement.style.borderRadius = "15px";
+//   return remoteVideoElement;
+// };
 
-export const createAlertContainer = (
-  alertContainerHtml: string
-): HTMLDivElement => {
-  const alertContainer = document.createElement("div");
-  alertContainer.classList.add("alert-container");
-  alertContainer.style.width = "300px"; // Same width as the video
-  alertContainer.style.height = "auto"; // Adjust height based on content
-  alertContainer.style.borderRadius = "15px"; // Same rounded corners as the video
-  alertContainer.innerHTML = alertContainerHtml;
-  return alertContainer;
-};
+// export const createAlertContainer = (
+//   alertContainerHtml: string
+// ): HTMLDivElement => {
+//   const alertContainer = document.createElement("div");
+//   alertContainer.classList.add("alert-container");
+//   alertContainer.style.width = "300px"; // Same width as the video
+//   alertContainer.style.height = "auto"; // Adjust height based on content
+//   alertContainer.style.borderRadius = "15px"; // Same rounded corners as the video
+//   alertContainer.innerHTML = alertContainerHtml;
+//   return alertContainer;
+// };
 
-export const createLocalVideoElement = (): HTMLVideoElement => {
-  const localVideoElement = document.createElement("video");
-  localVideoElement.autoplay = true;
-  localVideoElement.muted = true; // Mute local video to avoid feedback
-  localVideoElement.style.position = "absolute";
-  localVideoElement.style.width = "100px";
-  localVideoElement.style.height = "auto";
-  localVideoElement.style.bottom = "10px";
-  localVideoElement.style.left = "10px";
-  localVideoElement.style.borderRadius = "15px";
-  localVideoElement.style.zIndex = "10000";
-  return localVideoElement;
-};
+// export const createLocalVideoElement = (): HTMLVideoElement => {
+//   const localVideoElement = document.createElement("video");
+//   localVideoElement.autoplay = true;
+//   localVideoElement.muted = true; // Mute local video to avoid feedback
+//   localVideoElement.style.position = "absolute";
+//   localVideoElement.style.width = "100px";
+//   localVideoElement.style.height = "auto";
+//   localVideoElement.style.bottom = "10px";
+//   localVideoElement.style.left = "10px";
+//   localVideoElement.style.borderRadius = "15px";
+//   localVideoElement.style.zIndex = "10000";
+//   return localVideoElement;
+// };
 
-export const applyAlertContainerCss = (alertContainerCss: string): void => {
-  const style = document.createElement("style");
-  style.innerHTML = alertContainerCss;
-  document.head.appendChild(style);
-};
+// export const applyAlertContainerCss = (alertContainerCss: string): void => {
+//   const style = document.createElement("style");
+//   style.innerHTML = alertContainerCss;
+//   document.head.appendChild(style);
+// };
 
-export const makeVideoDraggable = (container: HTMLDivElement): void => {
-  container.onmousedown = function (event) {
-    let shiftX = event.clientX - container.getBoundingClientRect().left;
-    let shiftY = event.clientY - container.getBoundingClientRect().top;
+// export const makeVideoDraggable = (container: HTMLDivElement): void => {
+//   container.onmousedown = function (event) {
+//     let shiftX = event.clientX - container.getBoundingClientRect().left;
+//     let shiftY = event.clientY - container.getBoundingClientRect().top;
 
-    function moveAt(pageX: number, pageY: number) {
-      container.style.left = pageX - shiftX + "px";
-      container.style.top = pageY - shiftY + "px";
-    }
+//     function moveAt(pageX: number, pageY: number) {
+//       container.style.left = pageX - shiftX + "px";
+//       container.style.top = pageY - shiftY + "px";
+//     }
 
-    function onMouseMove(event: MouseEvent) {
-      moveAt(event.pageX, event.pageY);
-    }
+//     function onMouseMove(event: MouseEvent) {
+//       moveAt(event.pageX, event.pageY);
+//     }
 
-    document.addEventListener("mousemove", onMouseMove);
+//     document.addEventListener("mousemove", onMouseMove);
 
-    container.onmouseup = function () {
-      document.removeEventListener("mousemove", onMouseMove);
-      container.onmouseup = null;
-    };
+//     container.onmouseup = function () {
+//       document.removeEventListener("mousemove", onMouseMove);
+//       container.onmouseup = null;
+//     };
 
-    container.ondragstart = function () {
-      return false;
-    };
-  };
-};
+//     container.ondragstart = function () {
+//       return false;
+//     };
+//   };
+// };
 
 export const createChoosePlatformContainer = (): HTMLDivElement => {
   const container = document.createElement("div");

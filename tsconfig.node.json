@@ -1,11 +1,16 @@
 {
   "compilerOptions": {
-    "composite": true,
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es6",
+    "strict": true,
     "skipLibCheck": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
-    "strict": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "composite": true
   },
-  "include": ["vite.config.ts"]
+  "include": ["scripts/**/*", "webpack.config.ts", "src/**/*.ts"]
 }

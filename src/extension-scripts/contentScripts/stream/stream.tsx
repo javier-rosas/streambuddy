@@ -21,12 +21,14 @@ import {
   handleVideoTrackUnmute,
   logStreamInfo,
   logVideoElementReadyState,
+  makeRemoteVideoResizable,
   makeVideoDraggable,
 } from "./helpers";
 
 import { io } from "socket.io-client";
 
-const VITE_API_BASE_ENDPOINT = import.meta.env.VITE_API_BASE_ENDPOINT;
+const VITE_API_BASE_ENDPOINT =
+  process.env.VITE_API_BASE_ENDPOINT || "http://localhost:2000";
 
 class StreamHandler {
   private socket: any;
@@ -253,7 +255,45 @@ class StreamHandler {
 
     console.log("Displaying stream", stream);
 
-    // Check if the stream has any tracks
+    // // Check if the stream has any tracks
+    // const videoTrack = stream.getVideoTracks()[0];
+    // if (!videoTrack) {
+    //   console.error("No video track found in the MediaStream");
+    //   return;
+    // }
+
+    // if (!this.remoteVideoElement) {
+    //   const container = createContainer();
+    //   this.remoteVideoElement = createRemoteVideoElement();
+
+    //   const alertContainer = createAlertContainer(alertContainerHtml);
+
+    //   // Append the video and alert elements to the container
+    //   container.appendChild(this.remoteVideoElement);
+    //   container.appendChild(alertContainer);
+    //   document.body.appendChild(container);
+
+    //   // Apply CSS styles
+    //   applyAlertContainerCss(alertContainerCss);
+
+    //   // Add event listeners to make the video draggable
+    //   makeVideoDraggable(container);
+
+    //   // Log the video element for debugging
+    //   console.log("Video element added to DOM:", this.remoteVideoElement);
+
+    //   this.remoteVideoElement.onloadedmetadata = handleVideoMetadataLoaded(
+    //     this.remoteVideoElement
+    //   );
+    //   this.remoteVideoElement.onerror = handleVideoError;
+    //   this.remoteVideoElement.onplaying = handleVideoPlaying;
+    //   this.remoteVideoElement.onpause = handleVideoPause;
+    //   this.remoteVideoElement.onended = handleVideoEnded;
+    // }
+
+    // // Update the video element's srcObject if it already exists
+    // this.remoteVideoElement.srcObject = stream;
+
     const videoTrack = stream.getVideoTracks()[0];
     if (!videoTrack) {
       console.error("No video track found in the MediaStream");
@@ -276,6 +316,14 @@ class StreamHandler {
 
       // Add event listeners to make the video draggable
       makeVideoDraggable(container);
+
+      // Add event listeners to make the remote video resizable
+      // if (!this.localVideoElement) {
+      //   this.localVideoElement = createLocalVideoElement();
+      //   this.remoteVideoElement.parentElement?.appendChild(
+      //     this.localVideoElement
+      //   );
+      // }
 
       // Log the video element for debugging
       console.log("Video element added to DOM:", this.remoteVideoElement);
@@ -312,6 +360,8 @@ class StreamHandler {
 
       // Get the local stream (assuming you have a method to get it)
       if (this.localStream) this.localVideoElement.srcObject = this.localStream;
+
+      makeRemoteVideoResizable(this.remoteVideoElement, this.localVideoElement);
     }
 
     // Log stream information for debugging

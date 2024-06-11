@@ -5,11 +5,9 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
     "jsx": "react-jsx",
     "allowJs": true,
     "strict": true,
@@ -17,15 +15,12 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "baseUrl": "./src",
+    "outDir": "./dist",
     "paths": {
-      "@/types": ["types/index.ts"],
-      "@/services/*": ["services/*"],
-      "@/utils/*": ["utils/*"],
-      "@/constants": ["utils/constants.ts"],
-      "@/components/*": ["components/*"],
-      "@/assets/*": ["assets/*"],
-      "@/extension-scripts/*": ["extension-scripts/*"],
-    }
+      "@/*": ["./*"]
+    },
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

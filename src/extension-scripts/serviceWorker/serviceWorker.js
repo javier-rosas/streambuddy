@@ -1,7 +1,7 @@
-import { handleAuthToken } from "./auth/auth";
-import { handleNetflixStatus } from "./netflix/netflix";
-import { handleStartStream } from "./stream/stream";
-import { handleWebAppUserDataRequest } from "./webApp/webApp";
+import { handleAuthToken } from "./auth/auth.js";
+import { handleNetflixStatus } from "./netflix/netflix.js";
+import { handleStartStream } from "./stream/stream.js";
+import { handleWebAppUserDataRequest } from "./webApp/webApp.js";
 
 chrome.runtime.onMessage.addListener(handleNetflixStatus);
 chrome.runtime.onMessage.addListener(handleAuthToken);

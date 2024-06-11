@@ -1,5 +1,5 @@
 // import StreamHandler from "./stream/stream";
-import { netflixMain } from "./netflix/contentScript";
+import { netflixMain } from "./netflix/contentScript.js";
 
 netflixMain();
 

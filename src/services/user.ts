@@ -9,7 +9,7 @@ import { User } from "@/types";
 // Function to fetch user data from Google and store it in local storage
 export const fetchUserData = async (token: string): Promise<any> => {
   try {
-    const response = await fetch(VITE_GOOGLE_AUTH_ENDPOINT, {
+    const response = await fetch(VITE_GOOGLE_AUTH_ENDPOINT || "", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -32,7 +32,7 @@ export const fetchUserData = async (token: string): Promise<any> => {
 // Function to authenticate user and store JWT
 export const authenticateUserAndStoreJwt = async (user: any): Promise<any> => {
   try {
-    const authResponse = await fetch(VITE_API_AUTH_ENDPOINT, {
+    const authResponse = await fetch(VITE_API_AUTH_ENDPOINT || "", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +58,7 @@ export const createOrUpdateUser = async (
   user: User
 ): Promise<any> => {
   try {
-    const response = await fetch(VITE_API_USER_ENDPOINT, {
+    const response = await fetch(VITE_API_USER_ENDPOINT || "", {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${jwt}`,

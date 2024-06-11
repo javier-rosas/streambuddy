@@ -1,4 +1,4 @@
-import { getJwtToken, getUserData, logout } from "@/utils/userUtils.js";
+import { getJwtToken, getUserData, logout } from "@/utils/userUtils";
 
 import ChoosePlatform from "./ChoosePlatform";
 import Spinner from "@/components/random/Spinner";
