@@ -15,6 +15,7 @@ export const createContainer = (): HTMLDivElement => {
 
 export const createRemoteVideoElement = (): HTMLVideoElement => {
   const remoteVideoElement = document.createElement("video");
+  remoteVideoElement.id = "remote-video"; // Add an ID to the remote video element
   remoteVideoElement.autoplay = true;
   remoteVideoElement.style.width = "300px";
   remoteVideoElement.style.height = "auto";
@@ -37,6 +38,7 @@ export const createAlertContainer = (
 
 export const createLocalVideoElement = (): HTMLVideoElement => {
   const localVideoElement = document.createElement("video");
+  localVideoElement.id = "local-video"; // Add an ID to the local video element
   localVideoElement.autoplay = true;
   localVideoElement.muted = true; // Mute local video to avoid feedback
   localVideoElement.style.position = "absolute";
@@ -55,8 +57,8 @@ export const applyAlertContainerCss = (alertContainerCss: string): void => {
   document.head.appendChild(style);
 };
 
-export const makeVideoDraggable = (container: HTMLDivElement): void => {
-  interact(container).draggable({
+export const makeVideoDraggable = (videoElement: HTMLVideoElement): void => {
+  interact(videoElement).draggable({
     listeners: {
       move(event) {
         const target = event.target;
@@ -71,12 +73,9 @@ export const makeVideoDraggable = (container: HTMLDivElement): void => {
   });
 };
 
-export const makeRemoteVideoResizable = (
-  remoteVideoElement: HTMLVideoElement,
-  localVideoElement: HTMLVideoElement
-): void => {
-  interact(remoteVideoElement).resizable({
-    edges: { top: false, left: false, bottom: true, right: true },
+export const makeVideoResizable = (videoElement: HTMLVideoElement): void => {
+  interact(videoElement).resizable({
+    edges: { top: true, left: true, bottom: true, right: true }, // Enable resizing from all edges and corners
     listeners: {
       move(event) {
         const { width, height } = event.rect;
@@ -84,11 +83,23 @@ export const makeRemoteVideoResizable = (
         target.style.width = `${width}px`;
         target.style.height = `${height}px`;
 
-        // Ensure local video stays at the bottom left corner
-        localVideoElement.style.bottom = "10px";
-        localVideoElement.style.left = "10px";
+        // Optionally, maintain the aspect ratio if needed
+        if (target.dataset.aspectRatio) {
+          const aspectRatio = parseFloat(target.dataset.aspectRatio);
+          if (width / height > aspectRatio) {
+            target.style.width = `${height * aspectRatio}px`;
+          } else {
+            target.style.height = `${width / aspectRatio}px`;
+          }
+        }
       },
     },
+    modifiers: [
+      interact.modifiers.aspectRatio({
+        ratio: "preserve", // Maintain the original aspect ratio if needed
+        enabled: false, // Set to true if you want to enforce aspect ratio
+      }),
+    ],
   });
 };
 
@@ -180,87 +191,6 @@ export const logStreamInfo = (stream: MediaStream) => {
 export const logVideoElementReadyState = (videoElement: HTMLVideoElement) => {
   console.log("Video element readyState:", videoElement.readyState);
 };
-
-// export const createContainer = (): HTMLDivElement => {
-//   const container = document.createElement("div");
-//   container.style.position = "fixed";
-//   container.style.top = "10px";
-//   container.style.right = "10px";
-//   container.style.zIndex = "9999";
-//   container.style.maxWidth = "300px";
-//   container.style.backgroundColor = "transparent";
-//   container.style.padding = "0";
-//   container.style.border = "none";
-//   return container;
-// };
-
-// export const createRemoteVideoElement = (): HTMLVideoElement => {
-//   const remoteVideoElement = document.createElement("video");
-//   remoteVideoElement.autoplay = true;
-//   remoteVideoElement.style.width = "300px";
-//   remoteVideoElement.style.height = "auto";
-//   remoteVideoElement.style.borderRadius = "15px";
-//   return remoteVideoElement;
-// };
-
-// export const createAlertContainer = (
-//   alertContainerHtml: string
-// ): HTMLDivElement => {
-//   const alertContainer = document.createElement("div");
-//   alertContainer.classList.add("alert-container");
-//   alertContainer.style.width = "300px"; // Same width as the video
-//   alertContainer.style.height = "auto"; // Adjust height based on content
-//   alertContainer.style.borderRadius = "15px"; // Same rounded corners as the video
-//   alertContainer.innerHTML = alertContainerHtml;
-//   return alertContainer;
-// };
-
-// export const createLocalVideoElement = (): HTMLVideoElement => {
-//   const localVideoElement = document.createElement("video");
-//   localVideoElement.autoplay = true;
-//   localVideoElement.muted = true; // Mute local video to avoid feedback
-//   localVideoElement.style.position = "absolute";
-//   localVideoElement.style.width = "100px";
-//   localVideoElement.style.height = "auto";
-//   localVideoElement.style.bottom = "10px";
-//   localVideoElement.style.left = "10px";
-//   localVideoElement.style.borderRadius = "15px";
-//   localVideoElement.style.zIndex = "10000";
-//   return localVideoElement;
-// };
-
-// export const applyAlertContainerCss = (alertContainerCss: string): void => {
-//   const style = document.createElement("style");
-//   style.innerHTML = alertContainerCss;
-//   document.head.appendChild(style);
-// };
-
-// export const makeVideoDraggable = (container: HTMLDivElement): void => {
-//   container.onmousedown = function (event) {
-//     let shiftX = event.clientX - container.getBoundingClientRect().left;
-//     let shiftY = event.clientY - container.getBoundingClientRect().top;
-
-//     function moveAt(pageX: number, pageY: number) {
-//       container.style.left = pageX - shiftX + "px";
-//       container.style.top = pageY - shiftY + "px";
-//     }
-
-//     function onMouseMove(event: MouseEvent) {
-//       moveAt(event.pageX, event.pageY);
-//     }
-
-//     document.addEventListener("mousemove", onMouseMove);
-
-//     container.onmouseup = function () {
-//       document.removeEventListener("mousemove", onMouseMove);
-//       container.onmouseup = null;
-//     };
-
-//     container.ondragstart = function () {
-//       return false;
-//     };
-//   };
-// };
 
 export const createChoosePlatformContainer = (): HTMLDivElement => {
   const container = document.createElement("div");
