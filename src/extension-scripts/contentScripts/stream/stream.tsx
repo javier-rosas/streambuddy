@@ -41,6 +41,26 @@ class StreamHandler {
   private localVideoElement: HTMLVideoElement | null = null;
 
   constructor() {
+    /**
+     *
+     */
+    console.log("Hello from StreamBuddy!");
+    function getQueryParameter(name: string) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    const code = getQueryParameter("code");
+    if (code) {
+      console.log("Code from Next.js app:", code);
+      this.injectChoosePlatformComponent(code);
+    } else {
+      console.log("No code found in URL.");
+    }
+    /**
+     *
+     */
+
     chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
       if (message.type === "startStream") {
         console.log("message.sessionCode 1", message.sessionCode);
