@@ -43,14 +43,14 @@ class StreamHandler {
   constructor() {
     chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
       if (message.type === "startStream") {
-        console.log("message.link 1", message.link);
-        this.injectChoosePlatformComponent(message.link);
+        console.log("message.sessionCode 1", message.sessionCode);
+        this.injectChoosePlatformComponent(message.sessionCode);
       }
     });
   }
 
   // Function to start the streaming process
-  private async startStream(link: string) {
+  private async startStream(sessionCode: string) {
     try {
       this.socket = io(VITE_API_BASE_ENDPOINT);
       const constraints = {
@@ -69,38 +69,38 @@ class StreamHandler {
       return;
     }
 
-    console.log("message link 3", link);
-    this.socket.emit("join-room", { link });
+    console.log("message sessionCode 3", sessionCode);
+    this.socket.emit("join-room", { sessionCode });
 
     this.socket.on("user-connected", async (data: any) => {
       console.log(
         "User connected:",
-        data.link,
+        data.sessionCode,
         new Date().toLocaleTimeString()
       );
-      await this.initializePeerConnection(data.link);
-      await this.createAndSendOffer(data.link);
+      await this.initializePeerConnection(data.sessionCode);
+      await this.createAndSendOffer(data.sessionCode);
     });
 
     this.socket.on("offer", async (data: any) => {
-      console.log("Received offer from:", data.link);
-      await this.initializePeerConnection(data.link);
+      console.log("Received offer from:", data.sessionCode);
+      await this.initializePeerConnection(data.sessionCode);
       await this.receiveAndAnswerOffer(data);
     });
 
     this.socket.on("answer", async (data: any) => {
-      console.log("Received answer from:", data.link);
+      console.log("Received answer from:", data.sessionCode);
       await this.receiveAnswer(data);
     });
 
     this.socket.on("ice-candidate", async (data: any) => {
-      console.log("Received ICE candidate from:", data.link);
+      console.log("Received ICE candidate from:", data.sessionCode);
       await this.addIceCandidate(data);
     });
   }
 
   // Inject Choose Platform component into the DOM
-  private injectChoosePlatformComponent = async (link: string) => {
+  private injectChoosePlatformComponent = async (sessionCode: string) => {
     console.log("Injecting ChooseSettings component");
 
     const devices = await navigator.mediaDevices.enumerateDevices();
@@ -136,7 +136,7 @@ class StreamHandler {
     startButton.classList.add("custom-button");
 
     startButton.addEventListener("click", () => {
-      this.startStream(link);
+      this.startStream(sessionCode);
       document.body.removeChild(container);
     });
 
@@ -150,7 +150,7 @@ class StreamHandler {
   };
 
   // Initialize the peer connection
-  private async initializePeerConnection(link: string) {
+  private async initializePeerConnection(sessionCode: string) {
     this.peerConnection = new RTCPeerConnection();
 
     this.localStream.getTracks().forEach((track: MediaStreamTrack) => {
@@ -160,7 +160,10 @@ class StreamHandler {
 
     this.peerConnection.onicecandidate = (event: RTCPeerConnectionIceEvent) => {
       if (event.candidate) {
-        this.socket.emit("ice-candidate", { link, candidate: event.candidate });
+        this.socket.emit("ice-candidate", {
+          sessionCode,
+          candidate: event.candidate,
+        });
         console.log("Sent ICE candidate");
       }
     };
@@ -178,11 +181,11 @@ class StreamHandler {
   }
 
   // Create and send an offer to the remote peer
-  private async createAndSendOffer(link: string) {
+  private async createAndSendOffer(sessionCode: string) {
     try {
       const offer = await this.peerConnection.createOffer();
       await this.peerConnection.setLocalDescription(offer);
-      this.socket.emit("offer", { link, offer });
+      this.socket.emit("offer", { sessionCode, offer });
       console.log("Created and sent offer", offer);
     } catch (error) {
       console.error("Error creating and sending offer:", error);
@@ -197,7 +200,7 @@ class StreamHandler {
       );
       const answer = await this.peerConnection.createAnswer();
       await this.peerConnection.setLocalDescription(answer);
-      this.socket.emit("answer", { link: data.link, answer });
+      this.socket.emit("answer", { sessionCode: data.sessionCode, answer });
       console.log("Received and answered offer", answer);
 
       // Add queued ICE candidates
