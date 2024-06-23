@@ -22,7 +22,7 @@
         "*://*.netflix.com/*"
       ],
       "js": [
-        "assets/contentScript.js"
+        "assets/contentScriptNetflix.js"
       ],
       "type": "module"
     },
@@ -43,7 +43,7 @@
         "*://*.streamtogether.io/*"
       ],
       "js": [
-        "assets/streamingContentScript.js"
+        "assets/contentScriptStreaming.js"
       ],
       "type": "module"
     }

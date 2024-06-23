@@ -16,8 +16,9 @@ export default (env, argv) => {
     mode: isProduction ? "production" : "development",
     entry: {
       background: "./src/extension-scripts/serviceWorker/serviceWorker.js",
-      contentScript: "./src/extension-scripts/contentScripts/contentScript.js",
-      streamingContentScript:
+      contentScriptNetflix:
+        "./src/extension-scripts/contentScripts/netflix/netflix.tsx",
+      contentScriptStreaming:
         "./src/extension-scripts/contentScripts/stream/stream.tsx",
       contentScriptWebApp:
         "./src/extension-scripts/contentScripts/web-app/webApp.js",
