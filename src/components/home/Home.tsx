@@ -39,7 +39,13 @@ export default function Home() {
     setIsSpinning(true);
     await new Promise((resolve) => setTimeout(resolve, 500)); // Wait for 0.5 seconds
     const sessionCode = await getSessionCode();
-    chrome.runtime.sendMessage({ type: "startStream", sessionCode });
+    console.log("session code", sessionCode);
+    chrome.runtime.sendMessage(
+      { type: "startStream", sessionCode },
+      (response) => {
+        console.log("Response from background:", response);
+      }
+    );
     setIsSpinning(false);
   };
 

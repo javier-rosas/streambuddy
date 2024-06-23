@@ -44,26 +44,35 @@ class StreamHandler {
     /**
      *
      */
-    console.log("Hello from StreamBuddy!");
-    function getQueryParameter(name: string) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(name);
-    }
+    // console.log("Hello from StreamBuddy!");
+    // function getQueryParameter(name: string) {
+    //   const urlParams = new URLSearchParams(window.location.search);
+    //   return urlParams.get(name);
+    // }
 
-    const code = getQueryParameter("code");
-    if (code) {
-      console.log("Code from Next.js app:", code);
-      this.injectChoosePlatformComponent(code);
-    } else {
-      console.log("No code found in URL.");
-    }
+    // const code = getQueryParameter("code");
+    // if (code) {
+    //   console.log("Code from Next.js app:", code);
+    //   this.injectChoosePlatformComponent(code);
+    // } else {
+    //   console.log("No code found in URL.");
+    // }
     /**
      *
      */
 
-    chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
+    // chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
+    //   if (message.type === "startStream") {
+    //     console.log("message.sessionCode 1", message.sessionCode);
+    //     this.injectChoosePlatformComponent(message.sessionCode);
+    //   }
+    // });
+    chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+      console.log("Received message:", message);
       if (message.type === "startStream") {
-        console.log("message.sessionCode 1", message.sessionCode);
+        console.log("Session code received:", message.sessionCode);
+        // Handle the session code here
+        sendResponse({ status: "success", sessionCode: message.sessionCode });
         this.injectChoosePlatformComponent(message.sessionCode);
       }
     });
