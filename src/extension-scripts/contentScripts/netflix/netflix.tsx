@@ -1,10 +1,15 @@
-import { getQueryParameter } from "../helpers";
-import socket from "../socket";
+import { getQueryParameter, handleUrlChange } from "../helpers";
+
+import SocketSingleton from "../socket";
+
+type MovieSessions = Set<string>;
 
 class VideoObserver {
   private parentSelector: string;
   private parentElement: Element | null;
   private sessionCode: string | null = null;
+  private socket = SocketSingleton.getInstance();
+  private movieSessions: MovieSessions = new Set<string>();
 
   constructor(parentSelector: string) {
     this.parentSelector = parentSelector;
@@ -28,6 +33,18 @@ class VideoObserver {
     });
   }
 
+  public isMoviePlayed() {
+    // Observe URL changes using MutationObserver
+    const observer = new MutationObserver(() => {
+      handleUrlChange(this.socket, this.sessionCode, this.movieSessions);
+    });
+
+    observer.observe(document, { subtree: true, childList: true });
+
+    // Initial check in case the page is already on a watch URL
+    handleUrlChange(this.socket, this.sessionCode, this.movieSessions);
+  }
+
   private observePlaybackNotification(targetNode: Element) {
     const commonParent = targetNode.closest(this.parentSelector);
     if (!commonParent) return;
@@ -46,7 +63,7 @@ class VideoObserver {
     let playbackStatus = null;
 
     if (isPlayNotification) {
-      socket.emit("play", {
+      this.socket.emit("play", {
         sessionCode: this.sessionCode,
         currentTime: video.currentTime,
       });
@@ -55,7 +72,7 @@ class VideoObserver {
       currentTime = video.currentTime;
       playbackStatus = "playing";
     } else if (isPauseNotification) {
-      socket.emit("pause", {
+      this.socket.emit("pause", {
         sessionCode: this.sessionCode,
         currentTime: video.currentTime,
       });
@@ -65,16 +82,16 @@ class VideoObserver {
       playbackStatus = "paused";
     }
 
-    // Add listeners for socket "play" and "pause" actions
-    socket.on("play", (data) => {
+    // Add listeners for this.socket "play" and "pause" actions
+    this.socket.on("play", (data) => {
       if (data.sessionCode === this.sessionCode) {
         video.currentTime = data.currentTime;
         video.play();
-        console.log("Socket play action received", data);
+        console.log("this.socket play action received", data);
       }
     });
 
-    socket.on("pause", (data) => {
+    this.socket.on("pause", (data) => {
       if (data.sessionCode === this.sessionCode) {
         video.currentTime = data.currentTime;
         video.pause();
@@ -145,6 +162,7 @@ class VideoObserver {
 export function main() {
   const videoObserver = new VideoObserver(".watch-video");
   videoObserver.start();
+  videoObserver.isMoviePlayed();
 }
 
 main();

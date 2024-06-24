@@ -25,8 +25,8 @@ import {
   makeVideoResizable,
 } from "./helpers";
 
+import SocketSingleton from "../socket";
 import { getQueryParameter } from "../helpers";
-import socket from "../socket";
 
 class StreamHandler {
   private localStream: any;
@@ -36,6 +36,7 @@ class StreamHandler {
   private remoteVideoElement: HTMLVideoElement | null = null;
   private pendingCandidates: RTCIceCandidate[] = [];
   private localVideoElement: HTMLVideoElement | null = null;
+  private socket = SocketSingleton.getInstance();
 
   constructor() {
     console.log("Hello from StreamBuddy!");
@@ -76,9 +77,9 @@ class StreamHandler {
     }
 
     console.log("message sessionCode 3", sessionCode);
-    socket.emit("join-room", { sessionCode });
+    this.socket.emit("join-room", { sessionCode });
 
-    socket.on("user-connected", async (data: any) => {
+    this.socket.on("user-connected", async (data: any) => {
       console.log(
         "User connected:",
         data.sessionCode,
@@ -88,18 +89,18 @@ class StreamHandler {
       await this.createAndSendOffer(data.sessionCode);
     });
 
-    socket.on("offer", async (data: any) => {
+    this.socket.on("offer", async (data: any) => {
       console.log("Received offer from:", data.sessionCode);
       await this.initializePeerConnection(data.sessionCode);
       await this.receiveAndAnswerOffer(data);
     });
 
-    socket.on("answer", async (data: any) => {
+    this.socket.on("answer", async (data: any) => {
       console.log("Received answer from:", data.sessionCode);
       await this.receiveAnswer(data);
     });
 
-    socket.on("ice-candidate", async (data: any) => {
+    this.socket.on("ice-candidate", async (data: any) => {
       console.log("Received ICE candidate from:", data.sessionCode);
       await this.addIceCandidate(data);
     });
@@ -166,7 +167,7 @@ class StreamHandler {
 
     this.peerConnection.onicecandidate = (event: RTCPeerConnectionIceEvent) => {
       if (event.candidate) {
-        socket.emit("ice-candidate", {
+        this.socket.emit("ice-candidate", {
           sessionCode,
           candidate: event.candidate,
         });
@@ -191,7 +192,7 @@ class StreamHandler {
     try {
       const offer = await this.peerConnection.createOffer();
       await this.peerConnection.setLocalDescription(offer);
-      socket.emit("offer", { sessionCode, offer });
+      this.socket.emit("offer", { sessionCode, offer });
       console.log("Created and sent offer", offer);
     } catch (error) {
       console.error("Error creating and sending offer:", error);
@@ -206,7 +207,7 @@ class StreamHandler {
       );
       const answer = await this.peerConnection.createAnswer();
       await this.peerConnection.setLocalDescription(answer);
-      socket.emit("answer", { sessionCode: data.sessionCode, answer });
+      this.socket.emit("answer", { sessionCode: data.sessionCode, answer });
       console.log("Received and answered offer", answer);
 
       // Add queued ICE candidates
