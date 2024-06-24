@@ -1,10 +1,31 @@
+import { getQueryParameter } from "../helpers";
+import socket from "../socket";
+
 class VideoObserver {
   private parentSelector: string;
   private parentElement: Element | null;
+  private sessionCode: string | null = null;
 
   constructor(parentSelector: string) {
     this.parentSelector = parentSelector;
     this.parentElement = document.querySelector(parentSelector);
+
+    // https://www.netflix.com/browse?code=toston
+    // https://www.netflix.com/watch/70196264?movie-code=toston
+    const code = getQueryParameter("movie-code");
+    if (code) {
+      console.log("Code from Next.js app:", code);
+      this.sessionCode = code;
+    } else {
+      console.log("No code found in URL in netflix.tsx");
+    }
+
+    chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
+      if (message.type === "startStream") {
+        console.log("message.sessionCode 1", message.sessionCode);
+        this.sessionCode = message.sessionCode;
+      }
+    });
   }
 
   private observePlaybackNotification(targetNode: Element) {
@@ -25,16 +46,41 @@ class VideoObserver {
     let playbackStatus = null;
 
     if (isPlayNotification) {
+      socket.emit("play", {
+        sessionCode: this.sessionCode,
+        currentTime: video.currentTime,
+      });
       console.log("Super play!");
       console.log("video.currentTime", video.currentTime);
       currentTime = video.currentTime;
       playbackStatus = "playing";
     } else if (isPauseNotification) {
+      socket.emit("pause", {
+        sessionCode: this.sessionCode,
+        currentTime: video.currentTime,
+      });
       console.log("Super pause!");
       console.log("video.currentTime", video.currentTime);
       currentTime = video.currentTime;
       playbackStatus = "paused";
     }
+
+    // Add listeners for socket "play" and "pause" actions
+    socket.on("play", (data) => {
+      if (data.sessionCode === this.sessionCode) {
+        video.currentTime = data.currentTime;
+        video.play();
+        console.log("Socket play action received", data);
+      }
+    });
+
+    socket.on("pause", (data) => {
+      if (data.sessionCode === this.sessionCode) {
+        video.currentTime = data.currentTime;
+        video.pause();
+        console.log("Socket pause action received", data);
+      }
+    });
 
     if (!currentTime || !playbackStatus) return;
 
