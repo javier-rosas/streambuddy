@@ -25,10 +25,39 @@ class VideoObserver {
       console.log("No code found in URL in netflix.tsx");
     }
 
+    // chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
+    //   if (message.type === "startStream") {
+    //     console.log("message.sessionCode 1", message.sessionCode);
+    //     this.sessionCode = message.sessionCode;
+    //   }
+    // });
     chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
       if (message.type === "startStream") {
-        console.log("message.sessionCode 1", message.sessionCode);
-        this.sessionCode = message.sessionCode;
+        // Store the session code and set the reload flag
+        chrome.storage.local.set(
+          { sessionCode: message.sessionCode, reload: true },
+          () => {
+            // Reload the page
+            location.reload();
+          }
+        );
+      }
+    });
+
+    // Check if the page was reloaded and continue with the logic if necessary
+    this.checkReloadFlag();
+  }
+
+  checkReloadFlag() {
+    chrome.storage.local.get(["reload", "sessionCode"], (result) => {
+      if (result.reload) {
+        // Reset the reload flag
+        chrome.storage.local.set({ reload: false });
+
+        // Execute the remaining logic
+
+        console.log("message.sessionCode 1", result.sessionCode);
+        this.sessionCode = result.sessionCode;
       }
     });
   }
